@@ -4,18 +4,21 @@ from sqlalchemy_utils import database_exists, create_database
 import logging
 from .models.user import db
 from dotenv import load_dotenv
-from pathlib import Path
 from .routes.routes import init_routes
+from flask_jwt_extended import JWTManager
 
 
 def create_app():
+    # env path one level up from here
     basedir = path.abspath(path.dirname(path.dirname(__file__)))
     print(basedir)
     load_dotenv(path.join(basedir, ".env"))
-    # env_path = Path(__file__).parent.parent / ".env"
-    # load_dotenv(env_path)
 
     app = Flask(__name__)
+
+    # jwt
+    app.config["JWT_SECRET_KEY"] = environ.get("JWT_SECRET_KEY")
+    jwt = JWTManager(app)
 
     # pg db creation
     url = environ.get("POSTGRESQL_URL")
