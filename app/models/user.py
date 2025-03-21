@@ -1,7 +1,5 @@
 from sqlalchemy.sql import func
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from app.models import db
 
 
 class User(db.Model):
@@ -19,6 +17,8 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
+    accounts = db.relationship("Account", backref="user", lazy=True)
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -30,4 +30,5 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }

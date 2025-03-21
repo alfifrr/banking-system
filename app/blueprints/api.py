@@ -3,6 +3,7 @@ from app.models.user import User, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models.account import Account
 
 api = Blueprint("api", __name__)
 
@@ -27,19 +28,32 @@ def users():
         if User.query.filter_by(email=data["email"]).first():
             return jsonify({"error": "Email already exists"}), 400
 
-        # Create new user
-        new_user = User(
-            username=data["username"],
-            email=data["email"],
-            password_hash=generate_password_hash(data["password"]),
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-        )
-
         try:
+            # Create new user
+            new_user = User(
+                username=data["username"],
+                email=data["email"],
+                password_hash=generate_password_hash(data["password"]),
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+            )
             db.session.add(new_user)
+
+            # also create default savings account
+            main_account = Account(
+                account_number=Account.generate_unique_account_number(),
+                account_type="savings",
+                user=new_user,
+                is_main=True,
+            )
+            db.session.add(main_account)
+
             db.session.commit()
-            return jsonify(new_user.to_dict()), 201
+
+            # show new user and their acc info
+            response_data = new_user.to_dict()
+            response_data["account"] = main_account.to_dict()
+            return jsonify(response_data), 201
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
@@ -103,6 +117,13 @@ def profile():
 
     # GET
     return jsonify(user.to_dict())
+
+
+@api.route("/accounts", methods=["GET"])
+def accounts():
+    # GET
+    accounts = Account.query.all()
+    return jsonify([account.to_dict() for account in accounts])
 
 
 @api.route("/health")

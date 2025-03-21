@@ -2,7 +2,7 @@ from flask import Flask
 from os import environ, path
 from sqlalchemy_utils import database_exists, create_database
 import logging
-from .models.user import db
+from .models import db
 from dotenv import load_dotenv
 from .routes.routes import init_routes
 from flask_jwt_extended import JWTManager
