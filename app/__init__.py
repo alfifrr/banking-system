@@ -6,6 +6,9 @@ from .models import db
 from dotenv import load_dotenv
 from .routes.routes import init_routes
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
+
+migrate = Migrate()
 
 
 def create_app():
@@ -40,5 +43,8 @@ def create_app():
 
     # init routes
     init_routes(app)
+
+    # init flask-migrate
+    migrate.init_app(app, db)
 
     return app
