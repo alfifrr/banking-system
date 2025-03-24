@@ -5,6 +5,8 @@ from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.account import Account
 from password_strength import PasswordPolicy, tests
+from app.models.transaction import Transaction
+from decimal import Decimal
 
 api = Blueprint("api", __name__)
 
@@ -264,6 +266,139 @@ def manage_account(account_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@api.route("/transactions", methods=["GET", "POST"])
+@jwt_required()
+def create_transaction():
+    current_user_id = get_jwt_identity()
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"error": "Missing JSON in request"}), 400
+
+        data = request.get_json()
+
+        # validate fields
+        required_fields = ["account_id", "amount", "transaction_type"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # prevent access to another account
+        account = Account.query.get_or_404(data["account_id"])
+        if str(account.user_id) != current_user_id:
+            return jsonify({"error": "Unauthorized access to account"}), 403
+
+        # transfer validation
+        if data["transaction_type"] == Transaction.TRANSFER:
+            if "to_account_number" not in data:
+                return (
+                    jsonify(
+                        {
+                            "error": "Destination account number is required for transfers"
+                        }
+                    ),
+                    400,
+                )
+
+            to_account = Account.query.filter_by(
+                account_number=data["to_account_number"]
+            ).first()
+            if not to_account:
+                return jsonify({"error": "Destination account not found"}), 404
+
+            if account.id == to_account.id:
+                return jsonify({"error": "Cannot transfer to yourself"}), 400
+
+        try:
+            amount = Decimal(str(data["amount"]))
+
+            # prevent 0 transaction or below
+            if amount <= 0:
+                return jsonify({"error": "Amount must be positive"}), 400
+
+            # check for sufficient balance
+            if data["transaction_type"] in [
+                Transaction.WITHDRAWAL,
+                Transaction.TRANSFER,
+            ]:
+                if account.balance < amount:
+                    return jsonify({"error": "Insufficient funds"}), 400
+
+            transaction = Transaction(
+                amount=amount,
+                transaction_type=data["transaction_type"],
+                description=data.get("description", ""),
+                from_account_id=account.id,
+                to_account_id=(
+                    to_account.id
+                    if data["transaction_type"] == Transaction.TRANSFER
+                    else None
+                ),
+            )
+
+            if transaction.transaction_type == Transaction.DEPOSIT:
+                account.balance += amount
+            elif transaction.transaction_type == Transaction.WITHDRAWAL:
+                account.balance -= amount
+            elif transaction.transaction_type == Transaction.TRANSFER:
+                account.balance -= amount
+                to_account.balance += amount
+            else:
+                return jsonify({"error": "Invalid transaction type"}), 400
+
+            db.session.add(transaction)
+            db.session.commit()
+
+            return jsonify(transaction.to_dict()), 201
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+    # GET
+    user = User.query.get(int(current_user_id))
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # fetch all owned accs for the current logged user
+    user_account_ids = [account.id for account in user.accounts]
+
+    # filter all transactions made by current user-owned accs (both as sender and receiver)
+    transactions = (
+        Transaction.query.filter(
+            (Transaction.from_account_id.in_(user_account_ids))
+            | (Transaction.to_account_id.in_(user_account_ids))
+        )
+        .order_by(Transaction.created_at.desc())
+        .all()
+    )
+
+    return jsonify([transaction.to_dict() for transaction in transactions]), 200
+
+
+@api.route("/transactions/<int:transaction_id>", methods=["GET"])
+@jwt_required()
+def get_transaction_details(transaction_id):
+    current_user_id = get_jwt_identity()
+    user = User.query.get(int(current_user_id))
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user_account_ids = [account.id for account in user.accounts]
+
+    # get transaction data based on the queried id
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # only allow viewing for currently logged in user accounts
+    if (
+        transaction.from_account_id not in user_account_ids
+        and transaction.to_account_id not in user_account_ids
+    ):
+        return jsonify({"error": "Unauthorized access to transaction details"}), 403
+
+    return jsonify(transaction.to_dict()), 200
 
 
 # check db connection
