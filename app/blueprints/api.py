@@ -4,8 +4,40 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.account import Account
+from password_strength import PasswordPolicy, tests
 
 api = Blueprint("api", __name__)
+
+policy = PasswordPolicy.from_names(
+    length=8,  # min length: 8
+    uppercase=1,  # need min. 1 uppercase letters
+    numbers=1,  # need min. 1 digits
+    special=1,  # need min. 1 special characters
+    # nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
+)
+
+
+def strength_check(pw):
+    test = policy.test(pw)
+    if test:
+        error_messages = []
+        for failed_test in test:
+            test_type = failed_test.__class__.__name__
+
+            if test_type == "Length":
+                error_messages.append("Password must be at least 8 characters")
+            elif test_type == "Uppercase":
+                error_messages.append(
+                    "Password must contain at least 1 uppercase letter"
+                )
+            elif test_type == "Numbers":
+                error_messages.append("Password must contain at least 1 number")
+            elif test_type == "Special":
+                error_messages.append(
+                    "Password must contain at least 1 special character"
+                )
+        return error_messages
+    return None
 
 
 @api.route("/users", methods=["GET", "POST"])
@@ -21,6 +53,14 @@ def users():
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # check pw str
+        weak_password = strength_check(data["password"])
+        if weak_password:
+            return (
+                jsonify({"error": "Password is too weak", "details": weak_password}),
+                400,
+            )
 
         # Check if user already exists
         if User.query.filter_by(username=data["username"]).first():
@@ -89,6 +129,16 @@ def profile():
             # check for wrong curr password
             if not check_password_hash(user.password_hash, current_password):
                 return jsonify({"error": "Current password is incorrect"}), 401
+
+            # check new pw str
+            weak_password = strength_check(data["password"])
+            if weak_password:
+                return (
+                    jsonify(
+                        {"error": "Password is too weak", "details": weak_password}
+                    ),
+                    400,
+                )
 
             user.password_hash = generate_password_hash(data["password"])
             data.pop("password")
