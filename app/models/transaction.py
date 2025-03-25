@@ -16,19 +16,29 @@ class Transaction(db.Model):
         db.Integer, db.ForeignKey("accounts.id"), nullable=False
     )
     to_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
+    category_id = db.Column(
+        db.Integer, db.ForeignKey("transaction_categories.id"), nullable=True
+    )
 
+    # relationships
     from_account = db.relationship(
         "Account", foreign_keys=[from_account_id], backref="transactions_from"
     )
     to_account = db.relationship(
         "Account", foreign_keys=[to_account_id], backref="transactions_to"
     )
+    transaction_category = db.relationship(
+        "TransactionCategory",
+        foreign_keys=[category_id],
+        back_populates="transactions",
+    )
 
     DEPOSIT = "deposit"
     WITHDRAWAL = "withdrawal"
     TRANSFER = "transfer"
+    PAYMENT = "payment"
 
-    VALID_TYPES = [DEPOSIT, WITHDRAWAL, TRANSFER]
+    VALID_TYPES = [DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT]
 
     def __init__(self, **kwargs):
         super(Transaction, self).__init__(**kwargs)
@@ -36,26 +46,6 @@ class Transaction(db.Model):
             raise ValueError(
                 f"Invalid transaction type. Must be one of {self.VALID_TYPES}"
             )
-
-    # @property
-    # def is_valid(self):
-    #     if self.amount <= 0:
-    #         return False, "Amount must be positive"
-
-    #     if self.transaction_type == self.DEPOSIT:
-    #         return True, None
-
-    #     if self.transaction_type == self.WITHDRAWAL:
-    #         if self.from_account.balance < self.amount:
-    #             return False, "Insufficient funds"
-
-    #     if self.transaction_type == self.TRANSFER:
-    #         if not self.to_account_id:
-    #             return False, "Transfer requires destination account"
-    #         if self.from_account.balance < self.amount:
-    #             return False, "Insufficient funds"
-
-    #     return True, None
 
     def __repr__(self):
         return f"<Transaction {self.id}: {self.transaction_type} Rp. {self.amount}>"
@@ -68,6 +58,9 @@ class Transaction(db.Model):
             "description": self.description,
             "from_account_id": self.from_account_id,
             "to_account_id": self.to_account_id,
+            "category": (
+                self.transaction_category.name if self.transaction_category else None
+            ),
             "created_at": self.created_at.isoformat(),
             "from_account": (
                 self.from_account.account_number if self.from_account else None

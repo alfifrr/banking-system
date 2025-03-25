@@ -7,6 +7,7 @@ from app.models.account import Account
 from password_strength import PasswordPolicy, tests
 from app.models.transaction import Transaction
 from decimal import Decimal
+from app.models.transaction_category import TransactionCategory
 
 api = Blueprint("api", __name__)
 
@@ -311,6 +312,22 @@ def create_transaction():
             if account.id == to_account.id:
                 return jsonify({"error": "Cannot transfer to yourself"}), 400
 
+        # require category_id for payment
+        if data["transaction_type"] == Transaction.PAYMENT:
+            if "category_id" not in data:
+                return (
+                    jsonify(
+                        {
+                            "error": "Transaction category (category_id) is required for payment"
+                        }
+                    ),
+                    400,
+                )
+
+            category = TransactionCategory.query.get(data["category_id"])
+            if not category:
+                return jsonify({"error": "Invalid transaction category"}), 400
+
         try:
             amount = Decimal(str(data["amount"]))
 
@@ -318,10 +335,11 @@ def create_transaction():
             if amount <= 0:
                 return jsonify({"error": "Amount must be positive"}), 400
 
-            # check for sufficient balance
+            # check balance
             if data["transaction_type"] in [
                 Transaction.WITHDRAWAL,
                 Transaction.TRANSFER,
+                Transaction.PAYMENT,
             ]:
                 if account.balance < amount:
                     return jsonify({"error": "Insufficient funds"}), 400
@@ -336,11 +354,20 @@ def create_transaction():
                     if data["transaction_type"] == Transaction.TRANSFER
                     else None
                 ),
+                category_id=(
+                    data["category_id"]
+                    if data["transaction_type"] == Transaction.PAYMENT
+                    else None
+                ),
             )
 
+            # handle balance updates
             if transaction.transaction_type == Transaction.DEPOSIT:
                 account.balance += amount
-            elif transaction.transaction_type == Transaction.WITHDRAWAL:
+            elif transaction.transaction_type in [
+                Transaction.WITHDRAWAL,
+                Transaction.PAYMENT,
+            ]:
                 account.balance -= amount
             elif transaction.transaction_type == Transaction.TRANSFER:
                 account.balance -= amount
@@ -399,6 +426,12 @@ def get_transaction_details(transaction_id):
         return jsonify({"error": "Unauthorized access to transaction details"}), 403
 
     return jsonify(transaction.to_dict()), 200
+
+
+@api.route("/transactions/categories")
+def categories():
+    categories = TransactionCategory.query.all()
+    return jsonify([category.to_dict() for category in categories]), 200
 
 
 # check db connection

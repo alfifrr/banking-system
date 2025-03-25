@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from .routes.routes import init_routes
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from .models.seeders import seed_transaction_categories
 
 migrate = Migrate()
 
@@ -36,7 +37,9 @@ def create_app():
         db.init_app(app)
         with app.app_context():
             db.create_all()
+            seed_transaction_categories()  # add default categories
             logging.info("Database tables created successfully")
+
     except Exception as e:
         logging.error(f"Database connection error: {str(e)}")
         raise
