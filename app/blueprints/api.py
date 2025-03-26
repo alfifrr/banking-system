@@ -8,6 +8,8 @@ from password_strength import PasswordPolicy, tests
 from app.models.transaction import Transaction
 from decimal import Decimal
 from app.models.transaction_category import TransactionCategory
+from app.models.budget import Budget
+from datetime import datetime
 
 api = Blueprint("api", __name__)
 
@@ -312,8 +314,9 @@ def create_transaction():
             if account.id == to_account.id:
                 return jsonify({"error": "Cannot transfer to yourself"}), 400
 
-        # require category_id for payment
+        # check if it's payment type
         if data["transaction_type"] == Transaction.PAYMENT:
+            # check for category_id in req. body
             if "category_id" not in data:
                 return (
                     jsonify(
@@ -327,6 +330,35 @@ def create_transaction():
             category = TransactionCategory.query.get(data["category_id"])
             if not category:
                 return jsonify({"error": "Invalid transaction category"}), 400
+
+            # check for active budget in this category
+            active_budget = Budget.query.filter(
+                Budget.user_id == current_user_id,
+                Budget.category_id == category.id,
+                Budget.start_date <= datetime.now(),
+                Budget.end_date >= datetime.now(),
+            ).first()
+
+            # check if there's active budget
+            if active_budget:
+                amount = Decimal(str(data["amount"]))
+                if amount > active_budget.remaining_amount:
+                    return (
+                        jsonify(
+                            {
+                                "error": "Payment exceeds remaining budget.",
+                                "details": {
+                                    "requested_amount": float(amount),
+                                    "available_budget": float(
+                                        active_budget.remaining_amount
+                                    ),
+                                    "category": category.name,
+                                    "budget_end_date": active_budget.end_date.isoformat(),
+                                },
+                            }
+                        ),
+                        400,
+                    )
 
         try:
             amount = Decimal(str(data["amount"]))
@@ -369,6 +401,12 @@ def create_transaction():
                 Transaction.PAYMENT,
             ]:
                 account.balance -= amount
+
+                if (
+                    transaction.transaction_type == Transaction.PAYMENT
+                    and active_budget
+                ):
+                    active_budget.remaining_amount -= amount
             elif transaction.transaction_type == Transaction.TRANSFER:
                 account.balance -= amount
                 to_account.balance += amount

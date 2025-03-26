@@ -28,6 +28,24 @@ def create_budget():
         if not name:
             return jsonify({"error": "Budget name cannot be empty"}), 400
 
+        current_user_id = get_jwt_identity()
+
+        # check for existing active budget
+        existing_budget = Budget.query.filter(
+            Budget.user_id == current_user_id,
+            Budget.category_id == data["category_id"],
+            Budget.end_date > datetime.now(),
+        ).first()
+        if existing_budget:
+            return (
+                jsonify(
+                    {
+                        "error": f"Active budget already exists for this category until {existing_budget.end_date.isoformat()}"
+                    }
+                ),
+                400,
+            )
+
         # at least 1 min
         try:
             duration = int(data["duration_minutes"])
@@ -36,7 +54,6 @@ def create_budget():
         except ValueError:
             return jsonify({"error": "Duration must be a valid number"}), 400
 
-        current_user_id = get_jwt_identity()
         amount = Decimal(str(data["amount"]))
 
         if amount <= 0:
