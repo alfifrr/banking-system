@@ -141,6 +141,19 @@ def manage_bill(bill_id):
             return jsonify({"error": str(e)}), 500
 
     if request.method == "PUT":
+        if bill.status == "paid":
+            return jsonify(
+                {
+                    "error": "Cannot update a paid bill",
+                    "details": {
+                        "bill_id": bill.id,
+                        "biller_name": bill.biller_name,
+                        "status": bill.status,
+                        "paid_amount": float(bill.amount),
+                    },
+                }
+            )
+
         if not request.is_json:
             return jsonify({"error": "Missing JSON in request"}), 400
 
@@ -234,3 +247,58 @@ def manage_bill(bill_id):
 
     # GET
     return jsonify(bill.to_dict()), 200
+
+
+@bills_api.route("/bills/<int:bill_id>/cancel", methods=["POST"])
+@jwt_required()
+def cancel_bill(bill_id):
+    current_user_id = get_jwt_identity()
+    bill = Bill.query.get(bill_id)
+    if not bill:
+        return jsonify({"error": "Bill ID not found"}), 404
+
+    if str(bill.user_id) != current_user_id:
+        return jsonify({"error": "Unauthorized access to bill"}), 403
+
+    if bill.status == "paid":
+        return (
+            jsonify(
+                {
+                    "error": "Cannot cancel a paid bill",
+                    "details": {
+                        "bill_id": bill.id,
+                        "biller_name": bill.biller_name,
+                        "status": bill.status,
+                        "paid_amount": float(bill.amount),
+                    },
+                }
+            ),
+            400,
+        )
+
+    if bill.status == "cancelled":
+        return (
+            jsonify(
+                {
+                    "error": "Bill is already cancelled",
+                    "details": {
+                        "bill_id": bill.id,
+                        "biller_name": bill.biller_name,
+                        "status": bill.status,
+                    },
+                }
+            ),
+            400,
+        )
+
+    try:
+        bill.status = "cancelled"
+        db.session.commit()
+
+        return (
+            jsonify({"message": "Bill cancelled successfully", "bill": bill.to_dict()}),
+            200,
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
