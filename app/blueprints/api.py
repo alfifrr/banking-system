@@ -10,6 +10,7 @@ from decimal import Decimal
 from app.models.transaction_category import TransactionCategory
 from app.models.budget import Budget
 from datetime import datetime
+from app.models.bill import Bill
 
 api = Blueprint("api", __name__)
 
@@ -282,18 +283,140 @@ def create_transaction():
 
         data = request.get_json()
 
-        # validate fields
-        required_fields = ["account_id", "amount", "transaction_type"]
+        # validate fields based on the transaction type
+        if data.get("transaction_type") == Transaction.BILL_PAYMENT:
+            required_fields = ["account_id", "transaction_type", "bill_id"]
+        else:
+            required_fields = ["account_id", "amount", "transaction_type"]
+
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
         # prevent access to another account
-        account = Account.query.get_or_404(data["account_id"])
+        account = Account.query.get(data["account_id"])
+        if not account:
+            return jsonify({"error": "Account is not found"}), 404
         if str(account.user_id) != current_user_id:
             return jsonify({"error": "Unauthorized access to account"}), 403
 
-        # transfer validation
+        if data["transaction_type"] == Transaction.BILL_PAYMENT:
+            if "bill_id" not in data:
+                return (
+                    jsonify(
+                        {"error": "Bill ID (bill_id) is required for bill payments"}
+                    ),
+                    400,
+                )
+
+            # check bill id
+            bill = Bill.query.get(data["bill_id"])
+            if not bill:
+                # get pending bills as helper
+                pending_bills = Bill.query.filter_by(
+                    user_id=current_user_id, status="pending"
+                ).all()
+
+                return (
+                    jsonify(
+                        {
+                            "error": "Bill ID is not found",
+                            "details": {
+                                "available_pending_bills": [
+                                    {
+                                        "id": biller.id,
+                                        "account_id": biller.account_id,
+                                        "biller_name": biller.biller_name,
+                                        "amount": float(biller.amount),
+                                        "due_date": biller.due_date.isoformat(),
+                                    }
+                                    for biller in pending_bills
+                                ]
+                            },
+                        }
+                    ),
+                    404,
+                )
+
+            # check bill ownership
+            if str(bill.user_id) != current_user_id:
+                # get pending bills as helper
+                pending_bills = Bill.query.filter_by(
+                    user_id=current_user_id, status="pending"
+                ).all()
+
+                return (
+                    jsonify(
+                        {
+                            "error": "Unauthorized access to bill",
+                            "details": {
+                                "available_pending_bills": [
+                                    {
+                                        "id": biller.id,
+                                        "account_id": biller.account_id,
+                                        "biller_name": biller.biller_name,
+                                        "amount": float(biller.amount),
+                                        "due_date": biller.due_date.isoformat(),
+                                    }
+                                    for biller in pending_bills
+                                ]
+                            },
+                        }
+                    ),
+                    403,
+                )
+
+            # check bill status
+            if bill.status != "pending":
+                return (
+                    jsonify(
+                        {
+                            "error": "Cannot pay bill",
+                            "details": {
+                                "bill_id": bill.id,
+                                "biller_name": bill.biller_name,
+                                "status": bill.status,
+                                "reason": f"Bill is already {bill.status}",
+                            },
+                        }
+                    ),
+                    400,
+                )
+
+            # check correct account for paying
+            if bill.account_id != account.id:
+                return (
+                    jsonify(
+                        {
+                            "error": "Invalid account for bill payment",
+                            "details": {
+                                "bill_id": bill.id,
+                                "required_account": bill.account.account_number,
+                                "provided_account": account.account_number,
+                            },
+                        }
+                    ),
+                    400,
+                )
+
+            # check for sufficient balance
+            if account.balance < bill.amount:
+                return (
+                    jsonify(
+                        {
+                            "error": "Insufficient funds",
+                            "details": {
+                                "account_balance": float(account.balance),
+                                "bill_amount": float(bill.amount),
+                            },
+                        }
+                    ),
+                    400,
+                )
+            # auto. assign req. amount for bill payment
+            data["amount"] = str(bill.amount)
+
+        # transfer type validation
         if data["transaction_type"] == Transaction.TRANSFER:
             if "to_account_number" not in data:
                 return (
@@ -379,7 +502,11 @@ def create_transaction():
             transaction = Transaction(
                 amount=amount,
                 transaction_type=data["transaction_type"],
-                description=data.get("description", ""),
+                description=(
+                    data.get("description", f"Bill payment: {bill.biller_name}")
+                    if data["transaction_type"] == Transaction.BILL_PAYMENT
+                    else data.get("description", "")
+                ),
                 from_account_id=account.id,
                 to_account_id=(
                     to_account.id
@@ -387,14 +514,21 @@ def create_transaction():
                     else None
                 ),
                 category_id=(
-                    data["category_id"]
-                    if data["transaction_type"] == Transaction.PAYMENT
-                    else None
+                    bill.category_id
+                    if data["transaction_type"] == Transaction.BILL_PAYMENT
+                    else (
+                        data["category_id"]
+                        if data["transaction_type"] == Transaction.PAYMENT
+                        else None
+                    )
                 ),
             )
 
             # handle balance updates
-            if transaction.transaction_type == Transaction.DEPOSIT:
+            if transaction.transaction_type == Transaction.BILL_PAYMENT:
+                account.balance -= amount
+                bill.status = "paid"
+            elif transaction.transaction_type == Transaction.DEPOSIT:
                 account.balance += amount
             elif transaction.transaction_type in [
                 Transaction.WITHDRAWAL,

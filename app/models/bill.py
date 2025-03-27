@@ -37,6 +37,7 @@ class Bill(db.Model):
             "due_date": self.due_date.isoformat(),
             "amount": float(self.amount),
             "status": self.status,
+            "account_id": self.account_id,
             "account": self.account.account_number,
             "category": self.category.name,
             "created_at": self.created_at.isoformat(),

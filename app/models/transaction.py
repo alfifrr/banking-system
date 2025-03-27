@@ -37,8 +37,9 @@ class Transaction(db.Model):
     WITHDRAWAL = "withdrawal"
     TRANSFER = "transfer"
     PAYMENT = "payment"
+    BILL_PAYMENT = "bill_payment"
 
-    VALID_TYPES = [DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT]
+    VALID_TYPES = [DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, BILL_PAYMENT]
 
     def __init__(self, **kwargs):
         super(Transaction, self).__init__(**kwargs)
