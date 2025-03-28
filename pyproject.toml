@@ -9,7 +9,6 @@ dependencies = [
     "flask-jwt-extended>=4.7.1",
     "flask-migrate>=4.1.0",
     "flask-sqlalchemy>=3.1.1",
-    "gunicorn>=23.0.0",
     "password-strength>=0.0.3.post2",
     "psycopg2>=2.9.10",
     "python-dotenv>=1.0.1",
