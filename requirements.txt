@@ -28,8 +28,6 @@ flask-sqlalchemy==3.1.1
     #   flask-migrate
 greenlet==3.1.1
     # via sqlalchemy
-gunicorn==23.0.0
-    # via banking-system (pyproject.toml)
 idna==3.10
     # via requests
 itsdangerous==2.2.0
@@ -43,8 +41,6 @@ markupsafe==3.0.2
     #   jinja2
     #   mako
     #   werkzeug
-packaging==24.2
-    # via gunicorn
 password-strength==0.0.3.post2
     # via banking-system (pyproject.toml)
 psycopg2==2.9.10
