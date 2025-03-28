@@ -34,8 +34,6 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-logging==0.4.9.6
-    # via banking-system (pyproject.toml)
 mako==1.3.9
     # via alembic
 markupsafe==3.0.2
