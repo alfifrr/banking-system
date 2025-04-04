@@ -8,6 +8,8 @@ services:
     environment:
       FLASK_DEBUG: 1
       JWT_SECRET_KEY: 11c7c47261874573ad3ea79a11dcd471
+      POSTGRESQL_URL: postgresql://user:secret@db:5432/postgres
+      FLASK_APP: app
     command: flask run -h 0.0.0.0
     depends_on:
       db:

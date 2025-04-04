@@ -6,7 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Prerequisites](#prerequisites)
-  - [Setup Instructions](#setup-instructions)
+  - [Local Setup Instructions](#local-setup-instructions)
   - [API Documentation](#api-documentation)
   - [Docker Components](#docker-components)
   - [Important Notes](#important-notes)
@@ -21,25 +21,36 @@ RevoBank API is a banking system API built using Flask, designed to manage users
 
 Before setting up the project, ensure you have the following installed:
 
+- [Python](https://www.python.org/downloads/)
 - [Docker](https://www.docker.com/)
 - [Insomnia](https://insomnia.rest/download) (optional, for API testing)
 
-## Setup Instructions
+## Local Setup Instructions
 
 1. Navigate to the project directory.
-2. Build and run the Docker containers (first-time setup):
+2. Copy the `.env.example` file and rename it to `.env`.
+3. Open the `.env` file and add the `JWT_SECRET_KEY` variable. You can generate a secret key using the following commands in command prompt:
 
 ```bash
-docker compose up --build
+# Depends on the installed python, it can be python3
+python
+>>> import uuid
+>>> uuid.uuid4().hex
 ```
 
-3. To stop the running containers:
+4. Build and run the Docker containers for the first time (detached from the command prompt):
+
+```bash
+docker compose up --build -d
+```
+
+5. To stop the running containers:
 
 ```bash
 docker compose down
 ```
 
-4. To restart the containers:
+6. To restart the containers:
 
 ```bash
 docker compose up
