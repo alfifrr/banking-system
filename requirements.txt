@@ -10,8 +10,6 @@ charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via flask
-colorama==0.4.6
-    # via click
 flask==3.1.0
     # via
     #   banking-system (pyproject.toml)
@@ -28,8 +26,6 @@ flask-sqlalchemy==3.1.1
     #   flask-migrate
 greenlet==3.1.1
     # via sqlalchemy
-gunicorn==23.0.0
-    # via banking-system (pyproject.toml)
 idna==3.10
     # via requests
 itsdangerous==2.2.0
@@ -43,28 +39,26 @@ markupsafe==3.0.2
     #   jinja2
     #   mako
     #   werkzeug
-packaging==24.2
-    # via gunicorn
 password-strength==0.0.3.post2
     # via banking-system (pyproject.toml)
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
     # via banking-system (pyproject.toml)
 pyjwt==2.10.1
     # via flask-jwt-extended
-python-dotenv==1.1.0
+python-dotenv==1.0.1
     # via banking-system (pyproject.toml)
 requests==2.32.3
     # via banking-system (pyproject.toml)
 six==1.17.0
     # via password-strength
-sqlalchemy==2.0.40
+sqlalchemy==2.0.39
     # via
     #   alembic
     #   flask-sqlalchemy
     #   sqlalchemy-utils
 sqlalchemy-utils==0.41.2
     # via banking-system (pyproject.toml)
-typing-extensions==4.13.0
+typing-extensions==4.12.2
     # via
     #   alembic
     #   sqlalchemy

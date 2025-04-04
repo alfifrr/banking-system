@@ -1,107 +1,112 @@
-# RevoBank API
+# RevoBank API Documentation
 
 ## Table of Contents
 
-- [RevoBank API](#revobank-api)
+- [RevoBank API Documentation](#revobank-api-documentation)
   - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
   - [Prerequisites](#prerequisites)
-  - [Initial Setup](#initial-setup)
-    - [1. Database Setup](#1-database-setup)
-    - [2. Python Environment](#2-python-environment)
-    - [3. Dependencies](#3-dependencies)
-    - [4. Environment Configuration](#4-environment-configuration)
-    - [5. Database Initialization](#5-database-initialization)
-    - [6. Running the Application](#6-running-the-application)
+  - [Setup Instructions](#setup-instructions)
   - [API Documentation](#api-documentation)
+  - [Docker Components](#docker-components)
   - [Important Notes](#important-notes)
-  - [Dependencies Used](#dependencies-used)
+  - [Deployed Endpoints](#deployed-endpoints)
+  - [Dependencies](#dependencies)
+
+## Introduction
+
+RevoBank API is a banking system API built using Flask, designed to manage users, accounts, and transactions. This documentation provides setup instructions, API details, and deployment information.
 
 ## Prerequisites
 
-- Python 3.11+
-- PostgreSQL
-- UV package installer
+Before setting up the project, ensure you have the following installed:
 
-## Initial Setup
+- [Docker](https://www.docker.com/)
+- [Insomnia](https://insomnia.rest/download) (optional, for API testing)
 
-### 1. Database Setup
+## Setup Instructions
 
-```bash
-# Create database as postgres user
-psql -U postgres -c "CREATE DATABASE revobank"
-```
-
-### 2. Python Environment
+1. Navigate to the project directory.
+2. Build and run the Docker containers (first-time setup):
 
 ```bash
-# Install UV
-pip install uv
-
-# Create and activate virtual environment
-uv venv
-
-# Activate virtual environment
-# Windows CMD:
-.venv\Scripts\activate.bat
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# Linux/MacOS:
-source .venv/Scripts/activate
+docker compose up --build
 ```
 
-### 3. Dependencies
+3. To stop the running containers:
 
 ```bash
-uv pip install -r pyproject.toml
+docker compose down
 ```
 
-### 4. Environment Configuration
-
-1. Create `.env` file (see `.env.example`)
-2. Configure database: `POSTGRESQL_URL=postgresql://postgres:your_password@localhost/revobank`
-3. Generate JWT secret:
-
-```python
-import uuid
-uuid.uuid4().hex  # Copy output to JWT_SECRET_KEY in .env
-```
-
-### 5. Database Initialization
+4. To restart the containers:
 
 ```bash
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
-
-### 6. Running the Application
-
-```bash
-uv run flask run
+docker compose up
 ```
 
 ## API Documentation
 
-- Full API documentation: [Postman Collection](https://documenter.getpostman.com/view/39087709/2sAYkBrgBB)
-- Base URL: Replace `{{Prefix}}` with `https://banking-system-r349.onrender.com`
-- Deployment: Hosted on Render
+- Full API documentation is available via [Postman Collection](https://documenter.getpostman.com/view/39087709/2sAYkBrgBB).
+- Base URL: Replace `{{Prefix}}` with `https://banking-system-r349.onrender.com`.
+- Alternatively, import the `Insomnia_revobank_request_list.json` file into the Insomnia application.
+
+## Docker Components
+
+The Docker setup includes the following services:
+
+- **Flask Application**: Accessible at `http://localhost:5000`.
+- **PostgreSQL Database**: Runs on port `5432`.
+- **Adminer**: A database management tool (similar to PHPMyAdmin), accessible at `http://localhost:8080`.
 
 ## Important Notes
 
-- Ensure PostgreSQL service is running
-- Verify database connection using pgAdmin or psql
-- Default postgres password was set during installation
+- Ensure all Docker containers are running before accessing the application.
+- Use Adminer to inspect the database:
 
-## Dependencies Used
+  - **System**: PostgreSQL
+  - **Server**: db
+  - **Username**: user
+  - **Password**: secret
+  - **Database**: postgres
 
-- **Flask (>=3.1.0)**: Web framework for building the API
-- **Flask-JWT-Extended (>=4.7.1)**: JWT token authentication and authorization
-- **Flask-Migrate (>=4.1.0)**: Database migration management
-- **Flask-SQLAlchemy (>=3.1.1)**: SQL ORM for database operations
-- **Gunicorn (>=23.0.0)**: WSGI HTTP Server for deployment on Render
-- **password-strength (>=0.0.3.post2)**: Password validation and security checks
-- **psycopg2 (>=2.9.10)**: PostgreSQL database adapter
-- **python-dotenv (>=1.0.1)**: Environment (`.env`) variable management
-- **requests (>=2.32.3)**: HTTP requests handling
-- **sqlalchemy-utils (>=0.41.2)**: SQLAlchemy utility functions
-- **uuid (>=1.30)**: Unique identifier generation for `JWT_SECRET_KEY` variable
+- Example endpoints for testing:
+  - View all users: `http://127.0.0.1/api/users`
+  - View all accounts: `http://127.0.0.1/api/accounts`
+
+## Deployed Endpoints
+
+- **Render**: [https://banking-system-r349.onrender.com](https://banking-system-r349.onrender.com)
+- **Koyeb**: Coming soon
+
+## Dependencies
+
+The following Python dependencies are used in this project:
+
+- **Alembic** (1.15.1): Database migrations for SQLAlchemy
+- **Blinker** (1.9.0): Signal support for Flask
+- **Certifi** (2025.1.31): SSL certificate validation
+- **Charset-Normalizer** (3.4.1): Encoding detection
+- **Click** (8.1.8): CLI creation for Flask
+- **Flask** (3.1.0): Web framework
+- **Flask-JWT-Extended** (4.7.1): JWT authentication
+- **Flask-Migrate** (4.1.0): Database migration management
+- **Flask-SQLAlchemy** (3.1.1): SQL ORM
+- **Greenlet** (3.1.1): Concurrent programming
+- **IDNA** (3.10): Domain name handling
+- **Itsdangerous** (2.2.0): Cryptographic utilities
+- **Jinja2** (3.1.6): Templating engine
+- **Mako** (1.3.9): Templating engine for Alembic
+- **MarkupSafe** (3.0.2): String escaping
+- **Password-Strength** (0.0.3.post2): Password validation
+- **Psycopg2-Binary** (2.9.10): PostgreSQL adapter
+- **PyJWT** (2.10.1): JWT implementation
+- **Python-Dotenv** (1.0.1): Environment variable management
+- **Requests** (2.32.3): HTTP requests
+- **Six** (1.17.0): Python compatibility utilities
+- **SQLAlchemy** (2.0.39): SQL ORM
+- **SQLAlchemy-Utils** (0.41.2): SQLAlchemy utilities
+- **Typing-Extensions** (4.12.2): Typing features backport
+- **Urllib3** (2.3.0): HTTP client
+- **UUID** (1.30): Unique identifier generation
+- **Werkzeug** (3.1.3): WSGI utility library
