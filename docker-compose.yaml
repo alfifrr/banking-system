@@ -1,8 +1,9 @@
 services:
   app:
     build: .
+    image: alfifrr/bankingsystem
     ports:
-      - 5000:5000
+      - 8000:8000
     volumes:
       - .:/app
     environment:
@@ -10,7 +11,8 @@ services:
       JWT_SECRET_KEY: 11c7c47261874573ad3ea79a11dcd471
       POSTGRESQL_URL: postgresql://user:secret@db:5432/postgres
       FLASK_APP: app
-    command: flask run -h 0.0.0.0
+    # command: flask run -h 0.0.0.0
+    command: gunicorn --bind :8000 --workers 2 "app:create_app()"
     depends_on:
       db:
         condition: service_healthy

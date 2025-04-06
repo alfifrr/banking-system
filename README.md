@@ -28,29 +28,20 @@ Before setting up the project, ensure you have the following installed:
 ## Local Setup Instructions
 
 1. Navigate to the project directory.
-2. Copy the `.env.example` file and rename it to `.env`.
-3. Open the `.env` file and add the `JWT_SECRET_KEY` variable. You can generate a secret key using the following commands in command prompt:
 
-```bash
-# Depends on the installed python, it can be python3
-python
->>> import uuid
->>> uuid.uuid4().hex
-```
-
-4. Build and run the Docker containers for the first time (detached from the command prompt):
+2. Build and run the Docker containers for the first time (detached from the command prompt):
 
 ```bash
 docker compose up --build -d
 ```
 
-5. To stop the running containers:
+3. To stop the running containers:
 
 ```bash
 docker compose down
 ```
 
-6. To restart the containers:
+4. To restart the containers:
 
 ```bash
 docker compose up
@@ -66,7 +57,7 @@ docker compose up
 
 The Docker setup includes the following services:
 
-- **Flask Application**: Accessible at `http://localhost:5000`.
+- **Flask Application**: Accessible at `http://localhost:8000`.
 - **PostgreSQL Database**: Runs on port `5432`.
 - **Adminer**: A database management tool (similar to PHPMyAdmin), accessible at `http://localhost:8080`.
 
@@ -82,8 +73,8 @@ The Docker setup includes the following services:
   - **Database**: postgres
 
 - Example endpoints for testing:
-  - View all users: `http://127.0.0.1/api/users`
-  - View all accounts: `http://127.0.0.1/api/accounts`
+  - View all users: `http://127.0.0.1:8000/api/users`
+  - View all accounts: `http://127.0.0.1:8000/api/accounts`
 
 ## Deployed Endpoints
 
