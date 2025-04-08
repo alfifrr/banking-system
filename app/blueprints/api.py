@@ -649,3 +649,8 @@ def health_check():
         return {"status": "healthy", "database": "connected"}
     except Exception as e:
         return {"status": "unhealthy", "error": str(e)}, 500
+
+
+@api.route('/')
+def root():
+    return {'status': 'ok'}, 200

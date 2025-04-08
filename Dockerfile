@@ -18,3 +18,5 @@ RUN apk add --no-cache libffi openssl postgresql-libs
 COPY --from=builder /root/.local /root/.local
 COPY . .
 ENV PATH=/root/.local/bin:$PATH
+
+EXPOSE 8000
