@@ -10,13 +10,18 @@ charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via flask
+deprecated==1.2.18
+    # via limits
 flask==3.1.0
     # via
     #   banking-system (pyproject.toml)
     #   flask-jwt-extended
+    #   flask-limiter
     #   flask-migrate
     #   flask-sqlalchemy
 flask-jwt-extended==4.7.1
+    # via banking-system (pyproject.toml)
+flask-limiter==3.12
     # via banking-system (pyproject.toml)
 flask-migrate==4.1.0
     # via banking-system (pyproject.toml)
@@ -34,25 +39,39 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
+limits==4.6
+    # via flask-limiter
 mako==1.3.9
     # via alembic
+markdown-it-py==3.0.0
+    # via rich
 markupsafe==3.0.2
     # via
     #   jinja2
     #   mako
     #   werkzeug
+mdurl==0.1.2
+    # via markdown-it-py
+ordered-set==4.1.0
+    # via flask-limiter
 packaging==24.2
-    # via gunicorn
+    # via
+    #   gunicorn
+    #   limits
 password-strength==0.0.3.post2
     # via banking-system (pyproject.toml)
 psycopg2-binary==2.9.10
     # via banking-system (pyproject.toml)
+pygments==2.19.1
+    # via rich
 pyjwt==2.10.1
     # via flask-jwt-extended
 python-dotenv==1.0.1
     # via banking-system (pyproject.toml)
 requests==2.32.3
     # via banking-system (pyproject.toml)
+rich==13.9.4
+    # via flask-limiter
 six==1.17.0
     # via password-strength
 sqlalchemy==2.0.39
@@ -65,6 +84,7 @@ sqlalchemy-utils==0.41.2
 typing-extensions==4.12.2
     # via
     #   alembic
+    #   limits
     #   sqlalchemy
 urllib3==2.3.0
     # via requests
@@ -74,3 +94,5 @@ werkzeug==3.1.3
     # via
     #   flask
     #   flask-jwt-extended
+wrapt==1.17.2
+    # via deprecated

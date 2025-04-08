@@ -1,11 +1,20 @@
-FROM python:3.11
+FROM python:3.11-alpine AS builder
 
 WORKDIR /app
 
+# alpine specific build tools
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev postgresql-dev
+
 COPY requirements.txt requirements.txt
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 
 COPY . .
 
-#CMD ["flask", "run", "-h", "0.0.0.0"]
+FROM python:3.11-alpine
+WORKDIR /app
+# Install only runtime dependencies
+RUN apk add --no-cache libffi openssl postgresql-libs
+COPY --from=builder /root/.local /root/.local
+COPY . .
+ENV PATH=/root/.local/bin:$PATH

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Request
 from app.models.user import User, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
@@ -11,8 +11,21 @@ from app.models.transaction_category import TransactionCategory
 from app.models.budget import Budget
 from datetime import datetime
 from app.models.bill import Bill
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 api = Blueprint("api", __name__)
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=['200 per day', '50 per hour']
+)
+
+
+class LimitedRequest(Request):
+    _max_content_length = 1 * 1024 * 1024  # 1MB
+
 
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -37,7 +50,8 @@ def strength_check(pw):
                     "Password must contain at least 1 uppercase letter"
                 )
             elif test_type == "Numbers":
-                error_messages.append("Password must contain at least 1 number")
+                error_messages.append(
+                    "Password must contain at least 1 number")
             elif test_type == "Special":
                 error_messages.append(
                     "Password must contain at least 1 special character"
@@ -46,8 +60,22 @@ def strength_check(pw):
     return None
 
 
+def validate_transaction_amount(amount_str):
+    try:
+        amount = Decimal(str(amount_str))
+        if amount <= 0:
+            return None, "Amount must be positive"
+        return amount, None
+    except (ValueError, TypeError):
+        return None, "Invalid amount format"
+
+
 @api.route("/users", methods=["GET", "POST"])
 def users():
+    # limit req. length to 1mb to prevent dos attack
+    if request.content_length > LimitedRequest.max_content_length:
+        return jsonify({'error': 'Request too large'})
+
     if request.method == "POST":
         if not request.is_json:
             return jsonify({"error": "Missing JSON in request"}), 400
@@ -55,7 +83,8 @@ def users():
         data = request.get_json()
 
         # validate fields
-        required_fields = ["username", "email", "password", "first_name", "last_name"]
+        required_fields = ["username", "email",
+                           "password", "first_name", "last_name"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -64,7 +93,8 @@ def users():
         weak_password = strength_check(data["password"])
         if weak_password:
             return (
-                jsonify({"error": "Password is too weak", "details": weak_password}),
+                jsonify({"error": "Password is too weak",
+                        "details": weak_password}),
                 400,
             )
 
@@ -105,8 +135,11 @@ def users():
             return jsonify({"error": str(e)}), 500
 
     # GET
-    users = User.query.all()
-    return jsonify([user.to_dict() for user in users]), 200
+    try:
+        users = User.query.all()
+        return jsonify([user.to_dict() for user in users]), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @api.route("/users/me", methods=["GET", "PUT"])
@@ -273,6 +306,7 @@ def manage_account(account_id):
 
 
 @api.route("/transactions", methods=["GET", "POST"])
+@limiter.limit('20 per minute')
 @jwt_required()
 def create_transaction():
     current_user_id = get_jwt_identity()
@@ -464,7 +498,11 @@ def create_transaction():
 
             # check if there's active budget
             if active_budget:
-                amount = Decimal(str(data["amount"]))
+                # amount = Decimal(str(data["amount"]))
+                amount, error = validate_transaction_amount(data["amount"])
+                if error:
+                    return jsonify({"error": error}), 400
+
                 if amount > active_budget.remaining_amount:
                     return (
                         jsonify(
@@ -484,11 +522,14 @@ def create_transaction():
                     )
 
         try:
-            amount = Decimal(str(data["amount"]))
+            # amount = Decimal(str(data["amount"]))
 
-            # prevent 0 transaction or below
-            if amount <= 0:
-                return jsonify({"error": "Amount must be positive"}), 400
+            # # prevent 0 transaction or below
+            # if amount <= 0:
+            #     return jsonify({"error": "Amount must be positive"}), 400
+            amount, error = validate_transaction_amount(data["amount"])
+            if error:
+                return jsonify({"error": error}), 400
 
             # check balance
             if data["transaction_type"] in [
@@ -503,7 +544,8 @@ def create_transaction():
                 amount=amount,
                 transaction_type=data["transaction_type"],
                 description=(
-                    data.get("description", f"Bill payment: {bill.biller_name}")
+                    data.get("description",
+                             f"Bill payment: {bill.biller_name}")
                     if data["transaction_type"] == Transaction.BILL_PAYMENT
                     else data.get("description", "")
                 ),
@@ -552,6 +594,7 @@ def create_transaction():
 
             return jsonify(transaction.to_dict()), 201
         except ValueError as e:
+            db.session.rollback()
             return jsonify({"error": str(e)}), 400
         except Exception as e:
             db.session.rollback()

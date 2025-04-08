@@ -1,0 +1,17 @@
+# Exclude documentation and test files
+README.md
+Insomnia_revobank_request_list.json
+
+# Exclude Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude environment files
+.env
+.env.example
+
+.git
+node_modules
+*.log
+.DS_Store

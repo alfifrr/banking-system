@@ -15,7 +15,6 @@ migrate = Migrate()
 def create_app():
     # env path one level up from here
     basedir = path.abspath(path.dirname(path.dirname(__file__)))
-    print(basedir)
     load_dotenv(path.join(basedir, ".env"))
 
     app = Flask(__name__)
