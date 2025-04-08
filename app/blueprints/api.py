@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, Request
+from flask import Blueprint, request, jsonify
 from app.models.user import User, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
@@ -21,10 +21,6 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=['200 per day', '50 per hour']
 )
-
-
-class LimitedRequest(Request):
-    _max_content_length = 1 * 1024 * 1024  # 1MB
 
 
 policy = PasswordPolicy.from_names(
@@ -72,10 +68,6 @@ def validate_transaction_amount(amount_str):
 
 @api.route("/users", methods=["GET", "POST"])
 def users():
-    # limit req. length to 1mb to prevent dos attack
-    if request.content_length > LimitedRequest.max_content_length:
-        return jsonify({'error': 'Request too large'})
-
     if request.method == "POST":
         if not request.is_json:
             return jsonify({"error": "Missing JSON in request"}), 400
