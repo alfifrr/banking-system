@@ -4,12 +4,14 @@ from sqlalchemy_utils import database_exists, create_database
 import logging
 from .models import db
 from dotenv import load_dotenv
-from .routes.routes import init_routes
+
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .models.seeders import seed_transaction_categories
+from flask_bcrypt import Bcrypt
 
 migrate = Migrate()
+bcrypt = Bcrypt()
 
 
 def create_app():
@@ -18,6 +20,9 @@ def create_app():
     load_dotenv(path.join(basedir, ".env"))
 
     app = Flask(__name__)
+
+    # bcrypt
+    bcrypt.init_app(app)
 
     # jwt
     app.config["JWT_SECRET_KEY"] = environ.get("JWT_SECRET_KEY")
@@ -44,6 +49,7 @@ def create_app():
         raise
 
     # init routes
+    from .routes.routes import init_routes
     init_routes(app)
 
     # init flask-migrate

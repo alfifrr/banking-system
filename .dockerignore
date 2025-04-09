@@ -11,6 +11,9 @@ __pycache__/
 .env
 .env.example
 
+# Python virtual environment
+.venv
+
 .git
 node_modules
 *.log

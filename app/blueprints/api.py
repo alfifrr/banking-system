@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from app.models.user import User, db
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.account import Account
@@ -13,9 +12,11 @@ from datetime import datetime
 from app.models.bill import Bill
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_bcrypt import Bcrypt
 
 
 api = Blueprint("api", __name__)
+bcrypt = Bcrypt()
 
 limiter = Limiter(
     key_func=get_remote_address,
@@ -101,7 +102,8 @@ def users():
             new_user = User(
                 username=data["username"],
                 email=data["email"],
-                password_hash=generate_password_hash(data["password"]),
+                password_hash=bcrypt.generate_password_hash(
+                    data["password"]).decode('utf-8'),
                 first_name=data["first_name"],
                 last_name=data["last_name"],
             )
@@ -158,7 +160,7 @@ def profile():
                 )
 
             # check for wrong curr password
-            if not check_password_hash(user.password_hash, current_password):
+            if not bcrypt.check_password_hash(user.password_hash, current_password):
                 return jsonify({"error": "Current password is incorrect"}), 401
 
             # check new pw str
@@ -171,7 +173,8 @@ def profile():
                     400,
                 )
 
-            user.password_hash = generate_password_hash(data["password"])
+            user.password_hash = bcrypt.generate_password_hash(
+                data["password"]).decode('utf-8')
             data.pop("password")
             data.pop("current_password")
 

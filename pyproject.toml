@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "flask>=3.1.0",
+    "flask-bcrypt>=1.0.1",
     "flask-jwt-extended>=4.7.1",
     "flask-limiter>=3.12",
     "flask-migrate>=4.1.0",
