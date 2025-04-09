@@ -2,6 +2,8 @@
 #    uv pip compile pyproject.toml -o requirements.txt
 alembic==1.15.1
     # via flask-migrate
+bcrypt==4.3.0
+    # via flask-bcrypt
 blinker==1.9.0
     # via flask
 certifi==2025.1.31
@@ -15,10 +17,13 @@ deprecated==1.2.18
 flask==3.1.0
     # via
     #   banking-system (pyproject.toml)
+    #   flask-bcrypt
     #   flask-jwt-extended
     #   flask-limiter
     #   flask-migrate
     #   flask-sqlalchemy
+flask-bcrypt==1.0.1
+    # via banking-system (pyproject.toml)
 flask-jwt-extended==4.7.1
     # via banking-system (pyproject.toml)
 flask-limiter==3.12
