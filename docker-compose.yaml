@@ -3,7 +3,7 @@ services:
     build: .
     image: alfifrr/bankingsystem:latest
     ports:
-      - 8000:8000
+      - 8080:8080
     volumes:
       - .:/app
     environment:
@@ -11,7 +11,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       POSTGRESQL_URL: ${POSTGRESQL_URL}
       FLASK_APP: app
-    command: gunicorn --bind :8000 --workers 2 "app:create_app()"
+    command: gunicorn --bind 0.0.0.0:8080 --workers 2 "app:create_app()"
 #     depends_on:
 #       db:
 #         condition: service_healthy
