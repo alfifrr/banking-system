@@ -1,5 +1,8 @@
 from sqlalchemy.sql import func
 from app.models import db
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 
 class User(db.Model):
@@ -32,3 +35,10 @@ class User(db.Model):
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(
+            password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)

@@ -1,14 +1,11 @@
 from flask import Blueprint, request, jsonify
-from app.models import User, db
+from app.models import User, Account, db
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.account import Account
 from password_strength import PasswordPolicy
-from flask_bcrypt import Bcrypt
 
 
 api = Blueprint("api", __name__)
-bcrypt = Bcrypt()
 
 
 policy = PasswordPolicy.from_names(
@@ -79,11 +76,10 @@ def users():
             new_user = User(
                 username=data["username"],
                 email=data["email"],
-                password_hash=bcrypt.generate_password_hash(
-                    data["password"]).decode('utf-8'),
                 first_name=data["first_name"],
                 last_name=data["last_name"],
             )
+            new_user.set_password(data['password'])
             db.session.add(new_user)
 
             # also create default savings account
@@ -137,7 +133,7 @@ def profile():
                 )
 
             # check for wrong curr password
-            if not bcrypt.check_password_hash(user.password_hash, current_password):
+            if not user.check_password(current_password):
                 return jsonify({"error": "Current password is incorrect"}), 401
 
             # check new pw str
@@ -150,8 +146,7 @@ def profile():
                     400,
                 )
 
-            user.password_hash = bcrypt.generate_password_hash(
-                data["password"]).decode('utf-8')
+            user.set_password(data["password"])
             data.pop("password")
             data.pop("current_password")
 
