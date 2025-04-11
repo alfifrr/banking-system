@@ -1,6 +1,7 @@
 from sqlalchemy.sql import func
 from app.models import db
 from flask_bcrypt import Bcrypt
+from secrets import token_urlsafe
 
 bcrypt = Bcrypt()
 
@@ -22,6 +23,24 @@ class User(db.Model):
 
     accounts = db.relationship("Account", backref="user", lazy=True)
 
+    is_active = db.Column(db.Boolean, default=False, nullable=False)
+    activation_token = db.Column(db.String(255), unique=True)
+
+    def generate_activation_token(self):
+        self.activation_token = token_urlsafe(32)
+        return self.activation_token
+
+    def activate_account(self):
+        self.is_active = True
+        self.activation_token = None
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(
+            password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -34,11 +53,5 @@ class User(db.Model):
             "last_name": self.last_name,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "is_active": self.is_active,
         }
-
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(
-            password).decode('utf-8')
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)

@@ -10,7 +10,7 @@
   - [API Documentation](#api-documentation)
   - [Docker Components](#docker-components)
   - [Important Notes](#important-notes)
-  - [Deployed Endpoints](#deployed-endpoints)
+  - [Deployed Endpoint and Image](#deployed-endpoint-and-image)
   - [Dependencies](#dependencies)
 
 ## Introduction
@@ -57,29 +57,20 @@ docker compose up
 
 The Docker setup includes the following services:
 
-- **Flask Application**: Accessible at `http://localhost:8000`.
-- **PostgreSQL Database**: Runs on port `5432`.
-- **Adminer**: A database management tool (similar to PHPMyAdmin), accessible at `http://localhost:8080`.
+- **Flask Application**: Accessible at `http://localhost:8080`.
 
 ## Important Notes
 
 - Ensure all Docker containers are running before accessing the application.
-- Use Adminer to inspect the database:
-
-  - **System**: PostgreSQL
-  - **Server**: db
-  - **Username**: user
-  - **Password**: secret
-  - **Database**: postgres
 
 - Example endpoints for testing:
-  - View all users: `http://127.0.0.1:8000/api/users`
-  - View all accounts: `http://127.0.0.1:8000/api/accounts`
+  - View all users: `http://127.0.0.1:8080/api/users`
+  - View all accounts: `http://127.0.0.1:8080/api/accounts`
 
-## Deployed Endpoints
+## Deployed Endpoint and Image
 
 - **Render**: [https://banking-system-r349.onrender.com](https://banking-system-r349.onrender.com)
-- **Koyeb**: Coming soon
+- **Docker**: [DockerHub](https://hub.docker.com/r/alfifrr/bankingsystem)
 
 ## Dependencies
 

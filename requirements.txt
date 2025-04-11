@@ -5,7 +5,9 @@ alembic==1.15.1
 bcrypt==4.3.0
     # via flask-bcrypt
 blinker==1.9.0
-    # via flask
+    # via
+    #   flask
+    #   flask-mail
 certifi==2025.1.31
     # via requests
 charset-normalizer==3.4.1
@@ -20,6 +22,7 @@ flask==3.1.0
     #   flask-bcrypt
     #   flask-jwt-extended
     #   flask-limiter
+    #   flask-mail
     #   flask-migrate
     #   flask-sqlalchemy
 flask-bcrypt==1.0.1
@@ -27,6 +30,8 @@ flask-bcrypt==1.0.1
 flask-jwt-extended==4.7.1
     # via banking-system (pyproject.toml)
 flask-limiter==3.12
+    # via banking-system (pyproject.toml)
+flask-mail==0.10.0
     # via banking-system (pyproject.toml)
 flask-migrate==4.1.0
     # via banking-system (pyproject.toml)

@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, url_for
 from app.models import User, Account, db
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from password_strength import PasswordPolicy
+from app.utils.email import send_activation_email
 
 
 api = Blueprint("api", __name__)
@@ -78,8 +79,13 @@ def users():
                 email=data["email"],
                 first_name=data["first_name"],
                 last_name=data["last_name"],
+                is_active=False
             )
             new_user.set_password(data['password'])
+
+            # gen. act. token
+            activation_token = new_user.generate_activation_token()
+
             db.session.add(new_user)
 
             # also create default savings account
@@ -90,8 +96,16 @@ def users():
                 is_main=True,
             )
             db.session.add(main_account)
-
             db.session.commit()
+
+            # generate act. url
+            activation_url = url_for(
+                'api.activate_account',
+                token=activation_token,
+                _external=True
+            )
+            # send act. email
+            send_activation_email(new_user, activation_url)
 
             # show new user and their acc info
             response_data = new_user.to_dict()
@@ -106,6 +120,21 @@ def users():
         users = User.query.all()
         return jsonify([user.to_dict() for user in users]), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@api.route('/activate/<token>', methods=['GET'])
+def activate_account(token):
+    user = User.query.filter_by(activation_token=token).first()
+    if not user:
+        return jsonify({'error': 'Invalid activation token'}), 400
+
+    try:
+        user.activate_account()
+        db.session.commit()
+        return jsonify({'message': 'Account activated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
 

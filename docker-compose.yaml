@@ -10,6 +10,10 @@ services:
       FLASK_DEBUG: 1
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       POSTGRESQL_URL: ${POSTGRESQL_URL}
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_DEFAULT_SENDER: ${MAIL_SENDER}
       FLASK_APP: app
     command: gunicorn --bind 0.0.0.0:8080 --workers 2 "app:create_app()"
 #     depends_on:

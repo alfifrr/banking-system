@@ -4,11 +4,11 @@ from sqlalchemy_utils import database_exists, create_database
 import logging
 from .models import db
 from dotenv import load_dotenv
-
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .models.seeders import seed_transaction_categories
 from flask_bcrypt import Bcrypt
+from app.utils.email import mail
 
 migrate = Migrate()
 bcrypt = Bcrypt()
@@ -54,5 +54,16 @@ def create_app():
 
     # init flask-migrate
     migrate.init_app(app, db)
+
+    # init mail service
+    app.config['MAIL_SERVER'] = environ.get('MAIL_SERVER')
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USE_SSL'] = False
+    app.config['MAIL_USERNAME'] = environ.get('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = environ.get('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = environ.get('MAIL_SENDER')
+
+    mail.init_app(app)
 
     return app
