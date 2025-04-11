@@ -1,0 +1,2113 @@
+type: collection.insomnia.rest/5.0
+name: RevoBank App
+meta:
+  id: wrk_28e0337b5fe043de9581b15a597bd391
+  created: 1740492371309
+  modified: 1744081229744
+collection:
+  - name: RevoBank
+    meta:
+      id: fld_2c2c1248893546a2a11e4ab062cbc015
+      created: 1743655275682
+      modified: 1744081229722
+      sortKey: -1743655273059
+    children:
+      - name: User Management
+        meta:
+          id: fld_eeb7608f61674104b8cc51106a4afef4
+          created: 1743655275702
+          modified: 1744081229726
+          sortKey: -1743655273058
+        children:
+          - url: "{{ _.Local }}/api/users"
+            name: Sign Up
+            meta:
+              id: req_17065a1bc3dd444cbe4c4f7d80f0eb7e
+              created: 1743655275711
+              modified: 1744410976098
+              isPrivate: false
+              description: |-
+                ### Add User
+
+                This endpoint allows the client to add a new user to the system.
+
+                #### Request Body
+
+                - `username` (string): The username of the user to be added.
+                    
+                - `email` (string): The email of the user to be added.
+                    
+                - `password` (string): The password for the user account.
+                    
+                - `first_name` (string): The first name of the user to be added.
+                    
+                - `last_name` (string): The last name of the user to be added.
+                    
+
+                #### Response
+
+                - Status: 201 Created
+                    
+                - Content-Type: application/json
+                    
+
+                ``` json
+                {
+                    "account": {
+                        "account_number": "",
+                        "account_type": "",
+                        "balance": 0,
+                        "created_at": "",
+                        "id": 0,
+                        "is_main": true,
+                        "updated_at": "",
+                        "user_id": 0
+                    },
+                    "created_at": "",
+                    "email": "",
+                    "first_name": "",
+                    "id": 0,
+                    "last_name": "",
+                    "updated_at": "",
+                    "username": ""
+                }
+
+                 ```
+              sortKey: -1743655273056
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "username": "bills",
+                    "email": "billskarsgaard@gmail.com",
+                    "password": "Passw0rd!",
+                    "first_name": "Bill",
+                    "last_name": "Skarsgaard"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/users/me"
+            name: Profile
+            meta:
+              id: req_18ff039470fa49d2a752f0c23d5baa69
+              created: 1743655275712
+              modified: 1744081229729
+              isPrivate: false
+              description: >-
+                ### Retrieve Current User Information
+
+
+                This endpoint allows you to retrieve the information of the current user.
+
+
+                #### Request
+
+
+                - Method: GET
+                    
+                - URL: `{{Prefix}}/api/users/me`
+                    
+
+                #### Response
+
+
+                The response will be a JSON object with the following schema:
+
+
+                ``` json
+
+                {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    }
+                  }
+                }
+
+                 ```
+              sortKey: -1743655273055
+            method: GET
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NTUyMywianRpIjoiNjg1ODAxNzItYjY1NS00YjUzLThmOWMtZTcxMTJmZDA5M2UyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDMxNzU1MjMsImNzcmYiOiJlNTViNjE1MS05NTE4LTQyZTctYjBkMC0yOWU2ZTAxMWQ3NmUiLCJleHAiOjE3NDMxNzY0MjN9.AHKRQOf37jf4yRgRe3I4jyHziY9-bL9r5c_2I_a5w10
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/users/me"
+            name: Update Profile
+            meta:
+              id: req_ea292ad6a3c64d858691e34fe37d4391
+              created: 1743655275714
+              modified: 1744409560471
+              isPrivate: false
+              description: >-
+                ### Update User Profile
+
+
+                This endpoint allows the user to update their profile information.
+
+
+                #### Request Body
+
+
+                - `current_password` (string): The current password of the user.
+                    
+                - `first_name` (string): The updated first name of the user.
+                    
+                - `last_name` (string): The updated last name of the user.
+                    
+                - `email` (string): The updated email address of the user.
+                    
+                - `username` (string): The updated username of the user.
+                    
+
+                #### Response
+
+
+                Upon a successful update, the endpoint returns a JSON object with the following fields:
+
+
+                - `created_at` (string): The timestamp of the user's profile creation.
+                    
+                - `email` (string): The updated email address of the user.
+                    
+                - `first_name` (string): The updated first name of the user.
+                    
+                - `id` (integer): The unique identifier of the user.
+                    
+                - `last_name` (string): The updated last name of the user.
+                    
+                - `updated_at` (string): The timestamp of the user's profile update.
+                    
+                - `username` (string): The updated username of the user.
+              sortKey: -1743655273054
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "current_password": "Passw0rd!!",
+                		"password": "Passw0rd!!!",
+                    "first_name": "Vivian",
+                    "last_name": "Vivianne",
+                    "email": "vandv@gmail.com",
+                    "username": "vivien"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDMwMTkxOSwianRpIjoiN2RiZTliMjgtMzg2ZS00NjIwLWJmNTMtNGQ1MDk1MTdiMzllIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjUiLCJuYmYiOjE3NDQzMDE5MTksImNzcmYiOiI0YTI4NjlkZC0wMWI5LTQwMGYtYjk3Zi04ZDU3YjcwMTRlNzMiLCJleHAiOjE3NDQzMDI4MTl9.rU4DnIj22rcimeG07R7aBRWgh8mt711PfY_Q1MQ6orA
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Auth
+        meta:
+          id: fld_69b72ddaae2746cdaaab9b7feaa5c2a7
+          created: 1743655275715
+          modified: 1744081229724
+          sortKey: -1743655273053
+        children:
+          - url: "{{ _.Local }}/api/login"
+            name: Login
+            meta:
+              id: req_5aeed385d3134312bb23e15f504f5930
+              created: 1743655275717
+              modified: 1744413518992
+              isPrivate: false
+              description: >-
+                ### API Request Description
+
+
+                This endpoint allows users to authenticate and obtain an access token by providing their username and password in the request body.
+
+
+                #### Request Body
+
+
+                - `username` (string): The username of the user.
+                    
+                - `password` (string): The password of the user.
+                    
+
+                ### API Response
+
+
+                The response will be in JSON format with the following schema:
+
+
+                ``` json
+
+                {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+
+                 ```
+              sortKey: -1743655273052
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "username": "bills",
+                    "password": "Passw0rd!"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/refresh-token"
+            name: Refresh Token
+            meta:
+              id: req_1f210390c5b746d38e88febb80eef189
+              created: 1744301731417
+              modified: 1744409560471
+              isPrivate: false
+              sortKey: -1744301731417
+            method: POST
+            headers:
+              - name: User-Agent
+                value: insomnia/10.2.0
+            authentication:
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDMwMTg0MiwianRpIjoiNTc1ZmE1NWUtYTI5Mi00YjY3LTk5NDktNmQzNzhlMGVlMjgwIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiI1IiwibmJmIjoxNzQ0MzAxODQyLCJjc3JmIjoiMzljNThkZTQtOTJkMy00MmI2LTkwYzktMWI1NTAwNzVlNTg4IiwiZXhwIjoxNzQ2ODkzODQyfQ.PjZGtHJpKNoIgFO-8rT19FpkFoRvpuyeDpQpV6L_hHg
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/send-verification"
+            name: Send Verification Email
+            meta:
+              id: req_3a0483f82da74b548e26aa756f6d3c99
+              created: 1744385926962
+              modified: 1744409560471
+              isPrivate: false
+              sortKey: -1744385926962
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"username": "topramen",
+                	"password": "Passw0rd!"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/10.2.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/activate/fFuS0RPPcn3M_rDq3ZVMX9l18MSVG9f5FjeQIymYdfw"
+            name: Activate Account
+            meta:
+              id: req_f586ab7384d3488d887ce60d4bc17774
+              created: 1744415434567
+              modified: 1744415574713
+              isPrivate: false
+              sortKey: -1744415434567
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Account Management
+        meta:
+          id: fld_f5ab22cad89c4e12b9d761f04b1a2266
+          created: 1743655275718
+          modified: 1744081229727
+          sortKey: -1743655273051
+        children:
+          - url: "{{ _.Local }}/api/accounts"
+            name: Accounts
+            meta:
+              id: req_750d048a63a848a2be5d85d11edddfb6
+              created: 1743655275720
+              modified: 1744413116113
+              isPrivate: false
+              description: >-
+                ### Retrieve User Accounts
+
+
+                This endpoint is used to retrieve a list of user accounts.
+
+
+                #### Request
+
+
+                - Method: GET
+                    
+                - URL: `{{Prefix}}/api/accounts`
+                    
+
+                #### Response
+
+
+                The response will be a JSON array containing objects with the following properties:
+
+
+                - `account_number` (string, optional): The account number associated with the user.
+                    
+                - `account_type` (string, optional): The type of the account.
+                    
+                - `balance` (number): The current balance in the account.
+                    
+                - `created_at` (string, optional): The date and time when the account was created.
+                    
+                - `id` (number): The unique identifier for the account.
+                    
+                - `is_main` (boolean): Indicates if the account is the main account for the user.
+                    
+                - `updated_at` (string, optional): The date and time when the account was last updated.
+                    
+                - `user_id` (number): The unique identifier of the user to whom the account belongs.
+                    
+
+                ``` json
+
+                [
+                  {
+                    "account_number": "",
+                    "account_type": "",
+                    "balance": 0,
+                    "created_at": "",
+                    "id": 0,
+                    "is_main": true,
+                    "updated_at": "",
+                    "user_id": 0
+                  }
+                ]
+
+                 ```
+              sortKey: -1743655273050
+            method: GET
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDQxMzA2OCwianRpIjoiYjhmZjhhNzMtOTczMi00MjgyLTllY2QtYmMzNzE3Yzc1YzRiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjUiLCJuYmYiOjE3NDQ0MTMwNjgsImNzcmYiOiIzNzdlOWY2NS00NDVkLTQ1NzMtOGEyOS04YmI2NDBkNzJlMmEiLCJleHAiOjE3NDQ0MTM5Njh9.sRFLJi3OVmuViacT3Uzn7GpETcIeKpD6yl448R0U3vU
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/accounts"
+            name: Account
+            meta:
+              id: req_602793ff163b4e149ae5d2f4975c34c6
+              created: 1743655275724
+              modified: 1744409560471
+              isPrivate: false
+              description: >-
+                ### Create New Account
+
+
+                This endpoint allows you to create a new account.
+
+
+                #### Request Body
+
+
+                - `account_type` (string, required): The type of account to be created.
+                    
+
+                Example:
+
+
+                ``` json
+
+                {
+                  "account_type": "checking"
+                }
+
+                 ```
+
+                #### Response
+
+
+                - Status: 201 Created
+                    
+                - Content-Type: application/json
+                    
+
+                Example Response Body:
+
+
+                ``` json
+
+                {
+                  "account_number": "",
+                  "account_type": "",
+                  "balance": 0,
+                  "created_at": "",
+                  "id": 0,
+                  "is_main": true,
+                  "updated_at": "",
+                  "user_id": 0
+                }
+
+                 ```
+              sortKey: -1743655273049
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_type": "savings"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDI1ODU1OSwianRpIjoiNzY5Y2IwOTgtNDZjNS00ODU2LWE0NWUtMTVhZTBiZjNkMzY1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjQiLCJuYmYiOjE3NDQyNTg1NTksImNzcmYiOiJmYTM1YjllMi1jMWExLTQ5OGUtOTUxMS0wNjRmOGJhNzEyNjIiLCJleHAiOjE3NDQyNTk0NTl9.2J0YusuD2N4bmX0cSWsUQdbbo2CTsxcR-wZFJ-3r45I
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/accounts/9"
+            name: Account Detail
+            meta:
+              id: req_0815f1afa06544428abbf44c7e4f7b92
+              created: 1743655275726
+              modified: 1744203577835
+              isPrivate: false
+              description: >-
+                ### Retrieve Account Details
+
+
+                This endpoint makes an HTTP GET request to retrieve the details of a specific account.
+
+
+                #### Request
+
+
+                - Method: GET
+                    
+                - URL: `{{Prefix}}/api/accounts/4`
+                    
+
+                #### Response
+
+
+                - Status: 200
+                    
+                - Content-Type: application/json
+                    
+
+                ``` json
+
+                {
+                    "account_number": "",
+                    "account_type": "",
+                    "balance": 0,
+                    "created_at": "",
+                    "id": 0,
+                    "is_main": true,
+                    "updated_at": "",
+                    "user_id": 0
+                }
+
+                 ```
+
+                The response contains the details of the account, including the account number, type, balance, creation and update timestamps, and user ID.
+              sortKey: -1743655273048
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMzQ5MiwianRpIjoiOWVmYjMxODMtOTc0YS00Y2IxLThmMGQtZWExOTU1ZTU2Njg1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDM0OTIsImNzcmYiOiI1NTUxMDkwNi1lY2YzLTRjOTQtYTg3My0wYzljYTM5MjAxZGEiLCJleHAiOjE3NDQyMDQzOTJ9.kq3UX6JsR7TAiPSEFNZlqwF_9FvSsyLFU_UIn14mGOY
+              disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/accounts/8"
+            name: Account
+            meta:
+              id: req_cf66b1c4030c440cb1769eec08f73844
+              created: 1743655275728
+              modified: 1744203621899
+              isPrivate: false
+              description: >-
+                This endpoint allows updating account information for a specific
+                account by using the HTTP PUT method. The request should be made
+                to {{Prefix}}/api/accounts/2 with the following payload in the
+                raw request body:
+
+
+                ``` json
+
+                {
+                    "account_type": "savings"
+                }
+
+                 ```
+
+                ### Response
+
+
+                - Status: 200
+                    
+                - Content-Type: application/json
+                    
+
+                The response will include the updated account details in JSON format, including the account number, account type, balance, creation and update timestamps, ID, and user ID.
+              sortKey: -1743655273047
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_type": "savings"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMzQ5MiwianRpIjoiOWVmYjMxODMtOTc0YS00Y2IxLThmMGQtZWExOTU1ZTU2Njg1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDM0OTIsImNzcmYiOiI1NTUxMDkwNi1lY2YzLTRjOTQtYTg3My0wYzljYTM5MjAxZGEiLCJleHAiOjE3NDQyMDQzOTJ9.kq3UX6JsR7TAiPSEFNZlqwF_9FvSsyLFU_UIn14mGOY
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/accounts/7"
+            name: Account
+            meta:
+              id: req_fa812a71fb0845adbfa902c3438926c9
+              created: 1743655275730
+              modified: 1744203699866
+              isPrivate: false
+              description: |-
+                ### Delete Account
+
+                This endpoint is used to delete a specific account.
+
+                #### Request Body
+
+                This request does not require a request body.
+
+                #### Response
+
+                - Status: 200
+                    
+                - Content-Type: application/json
+                    
+                - { "message": ""}
+              sortKey: -1743655273046
+            method: DELETE
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMzQ5MiwianRpIjoiOWVmYjMxODMtOTc0YS00Y2IxLThmMGQtZWExOTU1ZTU2Njg1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDM0OTIsImNzcmYiOiI1NTUxMDkwNi1lY2YzLTRjOTQtYTg3My0wYzljYTM5MjAxZGEiLCJleHAiOjE3NDQyMDQzOTJ9.kq3UX6JsR7TAiPSEFNZlqwF_9FvSsyLFU_UIn14mGOY
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Check Database Health
+        meta:
+          id: fld_cedc3061a24641f5be5e32852d643db4
+          created: 1743655275731
+          modified: 1744081229726
+          sortKey: -1743655273045
+        children:
+          - url: "{{ _.Local }}/api/health"
+            name: Health
+            meta:
+              id: req_70fd75ec13dd4d6fb22bd27a9c5b40eb
+              created: 1743655275732
+              modified: 1744081229736
+              isPrivate: false
+              description: >-
+                ### Health Check API
+
+
+                This endpoint is used to perform a health check on the API.
+
+
+                #### Request
+
+
+                - Method: GET
+                    
+                - URL: `{{Prefix}}/api/health`
+                    
+
+                #### Response
+
+
+                Upon a successful execution, the API returns a status code of 200 and a JSON response with the following properties:
+
+
+                - `database` (string): Indicates the status of the database.
+                    
+                - `status` (string): Indicates the overall status of the API.
+                    
+
+                Example:
+
+
+                ``` json
+
+                {
+                    "database": "",
+                    "status": ""
+                }
+
+                 ```
+              sortKey: -1743655273044
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Transaction Management
+        meta:
+          id: fld_3247060fd63549c2b510d203dec6bfb5
+          created: 1743655275733
+          modified: 1744081229723
+          sortKey: -1743655273043
+        children:
+          - name: Budgeting
+            meta:
+              id: fld_3ee60d14f01a41f7b80ac14fc9de0388
+              created: 1743655275735
+              modified: 1744081229724
+              sortKey: -1743655273042
+            children:
+              - url: "{{ _.Local }}/api/budgets"
+                name: Budget
+                meta:
+                  id: req_4e90c57d71dd421994467032650c84f3
+                  created: 1743655275740
+                  modified: 1744202610984
+                  isPrivate: false
+                  description: >-
+                    ### Create a New Budget
+
+
+                    This endpoint allows you to create a new budget.
+
+
+                    #### Request Body
+
+
+                    - `name`: (string) The name of the budget.
+                        
+                    - `amount`: (number) The amount allocated for the budget.
+                        
+                    - `category_id`: (number) The ID of the category for the budget.
+                        
+                    - `duration_minutes`: (number) The duration of the budget in minutes.
+                        
+
+                    #### Response
+
+
+                    Upon successful creation, the endpoint returns the details of the newly created budget including:
+
+
+                    - `id`: (number) The ID of the created budget.
+                        
+                    - `name`: (string) The name of the budget.
+                        
+                    - `amount`: (number) The amount allocated for the budget.
+                        
+                    - `category`: (string) The category of the budget.
+                        
+                    - `start_date`: (string) The start date of the budget.
+                        
+                    - `end_date`: (string) The end date of the budget.
+                        
+                    - `remaining_amount`: (number) The remaining amount of the budget.
+                        
+
+                    ### Example
+
+
+                    ```
+
+                    POST {{Prefix}}/api/budgets
+
+                    {
+                      "name": "Foya foya",
+                      "amount": 10000,
+                      "category_id": 2,
+                      "duration_minutes": 5
+                    }
+
+                     ```
+
+                    #### Response
+
+
+                    - Status: 201
+                        
+                    - {"id": 1,"name": "Foya foya","amount": 10000,"category": "example_category","start_date": "2023-01-01","end_date": "2023-12-31","remaining_amount": 10000}
+                  sortKey: -1743655273041
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                        "name": "Foya foya",
+                        "amount": 1000.00,
+                        "category_id": 2,
+                        "duration_minutes": 60
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMjMyMSwianRpIjoiMDM1OTNiMWEtMDMzOS00ZTM4LThmOGItODExMDQ1ODA0ODY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDIzMjEsImNzcmYiOiJkNDQxMjY5Ny1jMDliLTQ5NTctOWZmYS05YWJlZGI1YTkwNTgiLCJleHAiOjE3NDQyMDMyMjF9.g3R3MCQiOrbN7rKtfQ9eur9hZkkp9TBVJNY3exLOV5A
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/budgets/1"
+                name: Edit Budget
+                meta:
+                  id: req_7f050a99121b41a584c39c7814f41ab9
+                  created: 1743655275743
+                  modified: 1744410799294
+                  isPrivate: false
+                  description: >-
+                    ### Update Budget
+
+
+                    This endpoint allows the user to update a specific budget by sending an HTTP PUT request to `{{Prefix}}/api/budgets/1`.
+
+
+                    #### Request Body
+
+
+                    - `name`: (string) The updated name of the budget.
+                        
+                    - `duration_minutes`: (number) The updated duration of the budget in minutes.
+                        
+                    - `category_id`: (number) The updated category ID of the budget.
+                        
+                    - `amount`: (number) The updated amount of the budget.
+                        
+
+                    #### Response
+
+
+                    Upon a successful update, the endpoint returns a status code of 200 and a JSON response with the updated budget details:
+
+
+                    - `amount`: The updated amount of the budget.
+                        
+                    - `category`: The updated category of the budget.
+                        
+                    - `end_date`: The updated end date of the budget.
+                        
+                    - `id`: The ID of the updated budget.
+                        
+                    - `name`: The updated name of the budget.
+                        
+                    - `remaining_amount`: The updated remaining amount of the budget.
+                        
+                    - `start_date`: The updated start date of the budget.
+                  sortKey: -1743655273040
+                method: PUT
+                body:
+                  mimeType: application/json
+                  text: "{\r
+
+                    \    \"name\": \"Updated Necessity
+                    Budget 4\",\r
+
+                    \    \"duration_minutes\": 10,\r
+
+                    \    \"category_id\": 1,\r
+
+                    \    \"amount\": 25000\r
+
+                    }"
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NTUyMywianRpIjoiNjg1ODAxNzItYjY1NS00YjUzLThmOWMtZTcxMTJmZDA5M2UyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDMxNzU1MjMsImNzcmYiOiJlNTViNjE1MS05NTE4LTQyZTctYjBkMC0yOWU2ZTAxMWQ3NmUiLCJleHAiOjE3NDMxNzY0MjN9.AHKRQOf37jf4yRgRe3I4jyHziY9-bL9r5c_2I_a5w10
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/budgets"
+                name: Budget
+                meta:
+                  id: req_a40680b60e8643f8a721453d2807cb48
+                  created: 1743655275744
+                  modified: 1744162618235
+                  isPrivate: false
+                  description: >-
+                    ### Retrieve Budgets
+
+
+                    This endpoint retrieves a list of budgets.
+
+
+                    #### Request
+
+
+                    - Method: `GET`
+                        
+                    - URL: `{{Prefix}}/api/budgets`
+                        
+
+                    #### Response
+
+
+                    The response is in JSON format and returns an array of budget objects with the following properties:
+
+
+                    - `amount` (number): The total amount of the budget.
+                        
+                    - `category` (string): The category of the budget.
+                        
+                    - `end_date` (string): The end date of the budget.
+                        
+                    - `id` (number): The unique identifier of the budget.
+                        
+                    - `name` (string): The name of the budget.
+                        
+                    - `remaining_amount` (number): The remaining amount of the budget.
+                        
+                    - `start_date` (string): The start date of the budget.
+                        
+
+                    Example response body:
+
+
+                    ``` json
+
+                    [
+                        {
+                            "amount": 0,
+                            "category": "",
+                            "end_date": "",
+                            "id": 0,
+                            "name": "",
+                            "remaining_amount": 0,
+                            "start_date": ""
+                        }
+                    ]
+
+                     ```
+
+                    #### JSON Schema
+
+
+                    ``` json
+
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "amount": { "type": "number" },
+                                "category": { "type": "string" },
+                                "end_date": { "type": "string" },
+                                "id": { "type": "number" },
+                                "name": { "type": "string" },
+                                "remaining_amount": { "type": "number" },
+                                "start_date": { "type": "string" }
+                            }
+                        }
+                    }
+
+                     ```
+                  sortKey: -1743655273039
+                method: GET
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDE2MjU5MCwianRpIjoiZmExZjYzODYtNDM1Ny00NTYwLWExZGQtMTYwODRjNjBjZjNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDQxNjI1OTAsImNzcmYiOiIzNzY3YTQ2YS0wMTg4LTRiYTUtOGUwNi05OGU3OTBjNzlmYjgiLCJleHAiOjE3NDQxNjM0OTB9.R4zAugvc_S2g8nv6vZ7hbtUgWtn9vrfzv6SeHcWbof4
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/budgets/1"
+                name: Budget by ID
+                meta:
+                  id: req_cb0477cd78604a71b8fab60ebea2538b
+                  created: 1743655275746
+                  modified: 1744410792318
+                  isPrivate: false
+                  description: >-
+                    ### Retrieve Budget Details
+
+
+                    This endpoint retrieves the details of a specific budget.
+
+
+                    #### Request
+
+
+                    - Method: GET
+                        
+                    - URL: `{{Prefix}}/api/budgets/1`
+                        
+
+                    #### Response
+
+
+                    The response will be a JSON object with the following schema:
+
+
+                    ``` json
+
+                    {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number"
+                            },
+                            "category": {
+                                "type": "string"
+                            },
+                            "end_date": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "remaining_amount": {
+                                "type": "number"
+                            },
+                            "start_date": {
+                                "type": "string"
+                            }
+                        }
+                    }
+
+                     ```
+                  sortKey: -1743655273038
+                method: GET
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NTUyMywianRpIjoiNjg1ODAxNzItYjY1NS00YjUzLThmOWMtZTcxMTJmZDA5M2UyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDMxNzU1MjMsImNzcmYiOiJlNTViNjE1MS05NTE4LTQyZTctYjBkMC0yOWU2ZTAxMWQ3NmUiLCJleHAiOjE3NDMxNzY0MjN9.AHKRQOf37jf4yRgRe3I4jyHziY9-bL9r5c_2I_a5w10
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Billing
+            meta:
+              id: fld_c0311d75328b43f59cc2e18578116533
+              created: 1743655275747
+              modified: 1744081229725
+              sortKey: -1743655273037
+            children:
+              - url: "{{ _.Local }}/api/bills"
+                name: View Bills
+                meta:
+                  id: req_fa44792172a640e2b6937cd8720d8791
+                  created: 1743655275748
+                  modified: 1744410785373
+                  isPrivate: false
+                  description: >-
+                    ### Retrieve Bills
+
+
+                    This endpoint retrieves a list of bills.
+
+
+                    #### Request
+
+
+                    - Method: GET
+                        
+                    - URL: `{{Prefix}}/api/bills`
+                        
+
+                    #### Response
+
+
+                    The response will be a JSON array containing bill objects with the following schema:
+
+
+                    ``` json
+
+                    [
+                        {
+                            "account": "string",
+                            "account_id": "number",
+                            "amount": "number",
+                            "biller_name": "string",
+                            "category": "string",
+                            "created_at": "string",
+                            "due_date": "string",
+                            "id": "number",
+                            "status": "string",
+                            "updated_at": "string or null"
+                        }
+                    ]
+
+                     ```
+                  sortKey: -1743655273036
+                method: GET
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NjMwOSwianRpIjoiMjdjMjEwMjQtODcyMS00MTYxLTllYzctMDdiODNmMzQ2MzRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NDMxNzYzMDksImNzcmYiOiI3MTZmZDcyMC1lNmMyLTRjNDAtYjQ0OS1hNzE4NDRiMTA1M2IiLCJleHAiOjE3NDMxNzcyMDl9.toYfuVnm48OIywrjXg-1V7FK6h_sgZZpvDcmZJAzRoU
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/bills"
+                name: Create Bill
+                meta:
+                  id: req_198863d820654a99b49705f10866aa6d
+                  created: 1743655275749
+                  modified: 1744202462846
+                  isPrivate: false
+                  description: >-
+                    ### Create a New Bill
+
+
+                    This endpoint allows you to create a new bill.
+
+
+                    #### Request Body
+
+
+                    - `biller_name` (string) - The name of the biller.
+                        
+                    - `due_date` (string) - The due date of the bill.
+                        
+                    - `amount` (number) - The amount of the bill.
+                        
+                    - `account_id` (number) - The ID of the account.
+                        
+                    - `category_id` (number) - The ID of the category.
+                        
+
+                    #### Response
+
+
+                    The response is a JSON object with the following schema:
+
+
+                    ``` json
+
+                    {
+                        "account": "",
+                        "account_id": 0,
+                        "amount": 0,
+                        "biller_name": "",
+                        "category": "",
+                        "created_at": "",
+                        "due_date": "",
+                        "id": 0,
+                        "status": "",
+                        "updated_at": null
+                    }
+
+                     ```
+
+                    The response schema includes the fields `account`, `account_id`, `amount`, `biller_name`, `category`, `created_at`, `due_date`, `id`, `status`, and `updated_at`.
+                  sortKey: -1743655273035
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                        "biller_name": "Bayar Pulsa",
+                        "due_date": "2025-04-10",
+                        "amount": 10000,
+                        "account_id": 5,
+                        "category_id": 1
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMjMyMSwianRpIjoiMDM1OTNiMWEtMDMzOS00ZTM4LThmOGItODExMDQ1ODA0ODY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDIzMjEsImNzcmYiOiJkNDQxMjY5Ny1jMDliLTQ5NTctOWZmYS05YWJlZGI1YTkwNTgiLCJleHAiOjE3NDQyMDMyMjF9.g3R3MCQiOrbN7rKtfQ9eur9hZkkp9TBVJNY3exLOV5A
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/bills/1"
+                name: View a Bill
+                meta:
+                  id: req_95053d5a1e734fd285f54ff9329d7eed
+                  created: 1743655275750
+                  modified: 1744081229738
+                  isPrivate: false
+                  description: >-
+                    ### Get Bill Details
+
+
+                    This endpoint retrieves the details of a specific bill by providing the bill ID in the request URL.
+
+
+                    #### Request
+
+
+                    - Method: GET
+                        
+                    - URL: `{{Prefix}}/api/bills/1`
+                        
+
+                    #### Response
+
+
+                    - Status: 200
+                        
+                    - Content-Type: application/json
+                        
+                    - { "account": "", "account_id": 0, "amount": 0, "biller_name": "", "category": "", "created_at": "", "due_date": "", "id": 0, "status": "", "updated_at": null}
+                  sortKey: -1743655273034
+                method: GET
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NjMwOSwianRpIjoiMjdjMjEwMjQtODcyMS00MTYxLTllYzctMDdiODNmMzQ2MzRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NDMxNzYzMDksImNzcmYiOiI3MTZmZDcyMC1lNmMyLTRjNDAtYjQ0OS1hNzE4NDRiMTA1M2IiLCJleHAiOjE3NDMxNzcyMDl9.toYfuVnm48OIywrjXg-1V7FK6h_sgZZpvDcmZJAzRoU
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/bills/1"
+                name: Edit Bill
+                meta:
+                  id: req_11f0438024544f43b38fa1a744e64ce7
+                  created: 1743655275751
+                  modified: 1744081229728
+                  isPrivate: false
+                  description: >-
+                    ## Update Bill Details
+
+
+                    This endpoint allows the client to update the details of a specific bill.
+
+
+                    ### Request
+
+
+                    - Method: PUT
+                        
+                    - URL: {{Prefix}}/api/bills/1
+                        
+                    - { "biller_name": "RDPT Trimegah", "amount": 50000, "due_date": "2025-05-15", "category_id": 3, "account_id": 3}
+                        
+
+                    ### Response
+
+
+                    The response for this request can be described using the following JSON schema:
+
+
+                    ``` json
+
+                    {
+                      "type": "object",
+                      "properties": {
+                        "account": { "type": "string" },
+                        "account_id": { "type": "integer" },
+                        "amount": { "type": "integer" },
+                        "biller_name": { "type": "string" },
+                        "category": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "due_date": { "type": "string" },
+                        "id": { "type": "integer" },
+                        "status": { "type": "string" },
+                        "updated_at": { "type": "string" }
+                      }
+                    }
+
+                     ```
+                  sortKey: -1743655273033
+                method: PUT
+                body:
+                  mimeType: application/json
+                  text: "{\r
+
+                    \    \"biller_name\": \"RDPT
+                    Trimegah\",\r
+
+                    \    \"amount\": 50000.00,\r
+
+                    \    \"due_date\": \"2025-05-15\",\r
+
+                    \    \"category_id\": 3,\r
+
+                    \    \"account_id\": 3\r
+
+                    }"
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NjMwOSwianRpIjoiMjdjMjEwMjQtODcyMS00MTYxLTllYzctMDdiODNmMzQ2MzRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NDMxNzYzMDksImNzcmYiOiI3MTZmZDcyMC1lNmMyLTRjNDAtYjQ0OS1hNzE4NDRiMTA1M2IiLCJleHAiOjE3NDMxNzcyMDl9.toYfuVnm48OIywrjXg-1V7FK6h_sgZZpvDcmZJAzRoU
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/bills/2"
+                name: Delete a Bill
+                meta:
+                  id: req_6b0a4ca0bc064a50a65aaeda7fcc53b5
+                  created: 1743655275753
+                  modified: 1744081229735
+                  isPrivate: false
+                  description: >-
+                    This endpoint sends an HTTP DELETE request to
+                    {{Prefix}}/api/bills/2 to delete a specific bill.
+
+
+                    ### Request Body
+
+
+                    This request does not contain a request body.
+
+
+                    ### Response
+
+
+                    - Status: 200
+                        
+                    - Content-Type: application/json
+                        
+
+                    ``` json
+
+                    {
+                        "message": ""
+                    }
+
+                     ```
+
+                    The response contains a JSON object with a message key, which may provide information about the success or outcome of the deletion operation.
+                  sortKey: -1743655273032
+                method: DELETE
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NjMwOSwianRpIjoiMjdjMjEwMjQtODcyMS00MTYxLTllYzctMDdiODNmMzQ2MzRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NDMxNzYzMDksImNzcmYiOiI3MTZmZDcyMC1lNmMyLTRjNDAtYjQ0OS1hNzE4NDRiMTA1M2IiLCJleHAiOjE3NDMxNzcyMDl9.toYfuVnm48OIywrjXg-1V7FK6h_sgZZpvDcmZJAzRoU
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{ _.Local }}/api/bills/1/cancel"
+                name: Cancel Bill
+                meta:
+                  id: req_c655113dc10b4f3399da467ffa5eb412
+                  created: 1743655275757
+                  modified: 1744081229741
+                  isPrivate: false
+                  description: >-
+                    ### Cancel Bill
+
+
+                    This endpoint is used to cancel a specific bill by making an HTTP POST request to `{{Prefix}}/api/bills/1/cancel`.
+
+
+                    #### Request Body
+
+
+                    - No request body parameters are required for this endpoint.
+                        
+
+                    #### Response
+
+
+                    - **Status**: 200
+                        
+                    - **Content-Type**: application/json
+                        
+                    - { "bill": { "account": "", "account_id": 0, "amount": 0, "biller_name": "", "category": "", "created_at": "", "due_date": "", "id": 0, "status": "", "updated_at": "" }, "message": ""}  
+                        The response contains the details of the cancelled bill and a message.
+                  sortKey: -1743655273031
+                method: POST
+                authentication:
+                  disabled: false
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzE3NjMwOSwianRpIjoiMjdjMjEwMjQtODcyMS00MTYxLTllYzctMDdiODNmMzQ2MzRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NDMxNzYzMDksImNzcmYiOiI3MTZmZDcyMC1lNmMyLTRjNDAtYjQ0OS1hNzE4NDRiMTA1M2IiLCJleHAiOjE3NDMxNzcyMDl9.toYfuVnm48OIywrjXg-1V7FK6h_sgZZpvDcmZJAzRoU
+                  type: bearer
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: Withdraw
+            meta:
+              id: req_4503caf0d1cd45a18868b4bcf0401f98
+              created: 1743655275760
+              modified: 1744110148814
+              isPrivate: false
+              description: >-
+                ### Add Transaction
+
+
+                This endpoint allows the user to add a new transaction.
+
+
+                #### Request Body
+
+
+                - `account_id` (number): The ID of the account for the transaction.
+                    
+                - `amount` (number): The amount of the transaction.
+                    
+                - `transaction_type` (string): The type of transaction (e.g., withdrawal, deposit).
+                    
+                - `description` (string): A description of the transaction.
+                    
+
+                #### Response
+
+
+                - Status: 201 Created
+                    
+                - Content-Type: application/json
+                    
+
+                Upon a successful request, the response will include the details of the newly created transaction, including the amount, category, creation timestamp, description, from and to account details, and the transaction type.
+              sortKey: -1743655273030
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_id": 2,
+                    "amount": 50000.00,
+                    "transaction_type": "withdrawal",
+                    "description": "ATM withdrawal"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDExMDA4NywianRpIjoiZDBhOTRmZGQtZDE2ZC00NjNjLTkxYTktZmY5NjJmMzBkZDcxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDQxMTAwODcsImNzcmYiOiJhMTA5NWU0Zi0zNDJlLTQxZGUtYTZiNi00YTUxNzZiNzM5ZWYiLCJleHAiOjE3NDQxMTA5ODd9.QzMC9KKDEqmzghmVOPi6uxVUYjlN7hpB83ZqvVOTQT8
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: User Transaction List
+            meta:
+              id: req_a843e015e1aa47489d5ae5b1d5c9ce8f
+              created: 1743655275761
+              modified: 1744193719955
+              isPrivate: false
+              description: >-
+                ### Get Transactions
+
+
+                This endpoint makes an HTTP GET request to retrieve a list of transactions.
+
+
+                #### Request Body
+
+
+                This request does not require a request body.
+
+
+                #### Response
+
+
+                - Status: 200
+                    
+                - Content-Type: application/json
+                    
+
+                The response will include an array of transactions, with each transaction containing the following fields:
+
+
+                - `amount` (number): The amount of the transaction.
+                    
+                - `category` (string): The category of the transaction.
+                    
+                - `created_at` (string): The timestamp of when the transaction was created.
+                    
+                - `description` (string): The description of the transaction.
+                    
+                - `from_account` (string): The account from which the transaction originated.
+                    
+                - `from_account_id` (number): The ID of the account from which the transaction originated.
+                    
+                - `id` (number): The ID of the transaction.
+                    
+                - `to_account` (string): The account to which the transaction was made.
+                    
+                - `to_account_id` (number): The ID of the account to which the transaction was made.
+                    
+                - `transaction_type` (string): The type of the transaction.
+              sortKey: -1743655273029
+            method: GET
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDE5MzQ0MCwianRpIjoiNGJhMWU5MDctMjBjZC00Y2I4LWJkOTktMGE2MjA0MDQ1M2UyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQxOTM0NDAsImNzcmYiOiJkMDRjZmMxZi01Y2RiLTRjOWItOGNhYi0zNmRjN2E3NzU1ZWUiLCJleHAiOjE3NDQxOTQzNDB9.6RVVCHuQ3diz-MSqUKdOj09C-gIFYuA6gpEGTfId9cg
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions/5"
+            name: Transaction Details
+            meta:
+              id: req_249a3f62fd8f4846bbd57e0a093e9040
+              created: 1743655275762
+              modified: 1744193832951
+              isPrivate: false
+              description: >-
+                ### Get Transaction Details
+
+
+                This endpoint retrieves the details of a specific transaction by providing the transaction ID in the URL.
+
+
+                #### Request
+
+
+                - Method: GET
+                    
+                - URL: `{{Prefix}}/api/transactions/1`
+                    
+
+                #### Response
+
+
+                - Status: 200
+                    
+                - Content-Type: application/json
+                    
+
+                ##### Response Body
+
+
+                ``` json
+
+                {
+                    "amount":0,
+                    "category":null,
+                    "created_at":"",
+                    "description":"",
+                    "from_account":"",
+                    "from_account_id":0,
+                    "id":0,
+                    "to_account":null,
+                    "to_account_id":null,
+                    "transaction_type":""
+                }
+
+                 ```
+              sortKey: -1743655273028
+            method: GET
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDE5MzQ0MCwianRpIjoiNGJhMWU5MDctMjBjZC00Y2I4LWJkOTktMGE2MjA0MDQ1M2UyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQxOTM0NDAsImNzcmYiOiJkMDRjZmMxZi01Y2RiLTRjOWItOGNhYi0zNmRjN2E3NzU1ZWUiLCJleHAiOjE3NDQxOTQzNDB9.6RVVCHuQ3diz-MSqUKdOj09C-gIFYuA6gpEGTfId9cg
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: Deposit
+            meta:
+              id: req_8d7e944f0a9b48eab9e41e985b26a982
+              created: 1743655275763
+              modified: 1744413148348
+              isPrivate: false
+              description: >-
+                ### Add Transaction
+
+
+                This endpoint allows you to add a new transaction.
+
+
+                #### Request Body
+
+
+                - `account_id` (number) - The ID of the account for the transaction.
+                    
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `transaction_type` (string) - The type of transaction (e.g., deposit, withdrawal).
+                    
+                - `description` (string) - A description of the transaction.
+                    
+
+                #### Response
+
+
+                Upon successful creation, the server responds with a status code of 201 and a JSON object containing the details of the newly created transaction, including the amount, category, created_at timestamp, description, from_account, from_account_id, ID, to_account, and to_account_id.
+              sortKey: -1743655273027
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_id": 14,
+                    "amount": 5000000.00,
+                    "transaction_type": "deposit",
+                    "description": "Bonus THR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDQxMzA2OCwianRpIjoiYjhmZjhhNzMtOTczMi00MjgyLTllY2QtYmMzNzE3Yzc1YzRiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjUiLCJuYmYiOjE3NDQ0MTMwNjgsImNzcmYiOiIzNzdlOWY2NS00NDVkLTQ1NzMtOGEyOS04YmI2NDBkNzJlMmEiLCJleHAiOjE3NDQ0MTM5Njh9.sRFLJi3OVmuViacT3Uzn7GpETcIeKpD6yl448R0U3vU
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: Transfer
+            meta:
+              id: req_ad02b3fded04408b9b446325f0fd3f26
+              created: 1743655275764
+              modified: 1744413308403
+              isPrivate: false
+              description: >-
+                ### Create Transaction
+
+
+                This endpoint allows you to create a new transaction.
+
+
+                #### Request Body
+
+
+                - `account_id` (integer) - The ID of the account initiating the transaction.
+                    
+                - `to_account_number` (string) - The account number of the recipient.
+                    
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `transaction_type` (string) - The type of transaction.
+                    
+                - `description` (string) - A description for the transaction.
+                    
+
+                #### Response
+
+
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `category` (string) - The category of the transaction.
+                    
+                - `created_at` (string) - The timestamp of the transaction creation.
+                    
+                - `description` (string) - The description of the transaction.
+                    
+                - `from_account` (string) - The account from which the transaction originated.
+                    
+                - `from_account_id` (integer) - The ID of the account from which the transaction originated.
+                    
+                - `id` (integer) - The ID of the transaction.
+                    
+                - `to_account` (string) - The account to which the transaction is made.
+                    
+                - `to_account_id` (integer) - The ID of the account to which the transaction is made.
+                    
+                - `transaction_type` (string) - The type of transaction.
+                    
+
+                #### Example
+
+
+                ``` json
+
+                {
+                  "account_id": 3,
+                  "to_account_number": "5782468643993712",
+                  "amount": 2999.55,
+                  "transaction_type": "transfer",
+                  "description": "Transfer test again"
+                }
+
+                 ```
+
+                ``` json
+
+                {
+                  "amount": 0,
+                  "category": null,
+                  "created_at": "",
+                  "description": "",
+                  "from_account": "",
+                  "from_account_id": 0,
+                  "id": 0,
+                  "to_account": "",
+                  "to_account_id": 0,
+                  "transaction_type": ""
+                }
+
+                 ```
+              sortKey: -1743655273026
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_id": 14,
+                    "to_account_number": "9466597996227570",
+                    "amount": 100000,
+                    "transaction_type": "transfer",
+                    "description": "Transfer test again"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDQxMzA2OCwianRpIjoiYjhmZjhhNzMtOTczMi00MjgyLTllY2QtYmMzNzE3Yzc1YzRiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjUiLCJuYmYiOjE3NDQ0MTMwNjgsImNzcmYiOiIzNzdlOWY2NS00NDVkLTQ1NzMtOGEyOS04YmI2NDBkNzJlMmEiLCJleHAiOjE3NDQ0MTM5Njh9.sRFLJi3OVmuViacT3Uzn7GpETcIeKpD6yl448R0U3vU
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions/categories"
+            name: Category
+            meta:
+              id: req_a75e2f703aea4da5bbd2e42f4b67d3e2
+              created: 1743655275765
+              modified: 1744081229739
+              isPrivate: false
+              description: >-
+                This endpoint retrieves a list of transaction categories via an
+                HTTP GET request to {{Prefix}}/api/transactions/categories.
+
+
+                ### Request
+
+
+                No request body is required for this request.
+
+
+                ### Response
+
+
+                The response will have a status code of 200 and a content type of application/json. It will contain an array of objects, where each object represents a transaction category. Each category object includes the following properties:
+
+
+                - `id` (number): The unique identifier for the category.
+                    
+                - `name` (string): The name of the category.
+                    
+                - `description` (string): The description of the category.
+                    
+
+                Example response body:
+
+
+                ``` json
+
+                [
+                    {
+                        "description": "",
+                        "id": 0,
+                        "name": ""
+                    }
+                ]
+
+                 ```
+              sortKey: -1743655273025
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: Payment
+            meta:
+              id: req_f8c9bb55313e4d838879e4dcf6418c0b
+              created: 1743655275766
+              modified: 1744202746399
+              isPrivate: false
+              description: >-
+                ### POST /api/transactions
+
+
+                This endpoint is used to create a new transaction.
+
+
+                #### Request Body
+
+
+                - `account_id` (number) - The ID of the account involved in the transaction.
+                    
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `transaction_type` (string) - The type of transaction (e.g., payment, transfer).
+                    
+                - `description` (string) - A brief description of the transaction.
+                    
+                - `category_id` (number) - The ID of the category associated with the transaction.
+                    
+
+                #### Response (201 - Created)
+
+
+                The response will be in JSON format and will contain the following fields:
+
+
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `category` (string) - The category associated with the transaction.
+                    
+                - `created_at` (string) - The timestamp of when the transaction was created.
+                    
+                - `description` (string) - A brief description of the transaction.
+                    
+                - `from_account` (string) - The account from which the transaction originated.
+                    
+                - `from_account_id` (number) - The ID of the account from which the transaction originated.
+                    
+                - `id` (number) - The ID of the transaction.
+                    
+                - `to_account` (string) - The account to which the transaction is directed.
+                    
+                - `to_account_id` (number) - The ID of the account to which the transaction is directed.
+                    
+                - `transaction_type` (string) - The type of transaction (e.g., payment, transfer).
+                    
+
+                #### JSON Schema for Response
+
+
+                ``` json
+
+                {
+                  "type": "object",
+                  "properties": {
+                    "amount": { "type": "number" },
+                    "category": { "type": "string" },
+                    "created_at": { "type": "string" },
+                    "description": { "type": "string" },
+                    "from_account": { "type": "string" },
+                    "from_account_id": { "type": "number" },
+                    "id": { "type": "number" },
+                    "to_account": { "type": ["string", "null"] },
+                    "to_account_id": { "type": ["number", "null"] },
+                    "transaction_type": { "type": "string" }
+                  }
+                }
+
+                 ```
+              sortKey: -1743655273024
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_id": 5,
+                    "amount": 600,
+                    "transaction_type": "payment",
+                    "description": "jajan",
+                    "category_id": 2
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMjMyMSwianRpIjoiMDM1OTNiMWEtMDMzOS00ZTM4LThmOGItODExMDQ1ODA0ODY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDIzMjEsImNzcmYiOiJkNDQxMjY5Ny1jMDliLTQ5NTctOWZmYS05YWJlZGI1YTkwNTgiLCJleHAiOjE3NDQyMDMyMjF9.g3R3MCQiOrbN7rKtfQ9eur9hZkkp9TBVJNY3exLOV5A
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.Local }}/api/transactions"
+            name: Pay Bill
+            meta:
+              id: req_52fb3907eaa44c519abb25f396d396fe
+              created: 1743655275767
+              modified: 1744202543899
+              isPrivate: false
+              description: >-
+                ### Add Transaction
+
+
+                This endpoint allows you to add a new transaction.
+
+
+                #### Request Body
+
+
+                - `account_id` (integer) - The ID of the account for the transaction.
+                    
+                - `transaction_type` (string) - The type of transaction.
+                    
+                - `bill_id` (integer) - The ID of the bill for bill payment.
+                    
+
+                #### Response
+
+
+                Upon successful creation, the server responds with a status code of 201 and the following JSON object:
+
+
+                - `amount` (number) - The amount of the transaction.
+                    
+                - `category` (string) - The category of the transaction.
+                    
+                - `created_at` (string) - The timestamp of the transaction creation.
+                    
+                - `description` (string) - The description of the transaction.
+                    
+                - `from_account` (string) - The account from which the transaction is made.
+                    
+                - `from_account_id` (integer) - The ID of the account from which the transaction is made.
+                    
+                - `id` (integer) - The ID of the transaction.
+                    
+                - `to_account` (string) - The account to which the transaction is made.
+                    
+                - `to_account_id` (integer) - The ID of the account to which the transaction is made.
+                    
+                - `transaction_type` (string) - The type of the transaction.
+              sortKey: -1743655273023
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "account_id": 5,
+                    "transaction_type": "bill_payment",
+                    "bill_id": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              disabled: false
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDIwMjMyMSwianRpIjoiMDM1OTNiMWEtMDMzOS00ZTM4LThmOGItODExMDQ1ODA0ODY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NDQyMDIzMjEsImNzcmYiOiJkNDQxMjY5Ny1jMDliLTQ5NTctOWZmYS05YWJlZGI1YTkwNTgiLCJleHAiOjE3NDQyMDMyMjF9.g3R3MCQiOrbN7rKtfQ9eur9hZkkp9TBVJNY3exLOV5A
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_b07835dc5e57bb922decceb114a321db24ee315b
+    created: 1744081229868
+    modified: 1744081229868
+environments:
+  name: RevoBank envs.
+  meta:
+    id: env_b07835dc5e57bb922decceb114a321db24ee315b
+    created: 1740492371313
+    modified: 1744082312715
+    isPrivate: false
+  subEnvironments:
+    - name: Local Port 8000
+      meta:
+        id: env_35d46cdaaf0d471aa84fee0185a6b11d
+        created: 1744081273149
+        modified: 1744081860950
+        isPrivate: false
+        sortKey: 1744081273149
+      data:
+        Local: http://127.0.0.1:8000
+    - name: Local Port 5000
+      meta:
+        id: env_51580580134a455698b23d5cd9e26297
+        created: 1744081386722
+        modified: 1744081862955
+        isPrivate: false
+        sortKey: 1744081273199
+      data:
+        Local: http://127.0.0.1:5000
+    - name: Render
+      meta:
+        id: env_14ba942c18f5442da9faaf2334b0ffee
+        created: 1744081826619
+        modified: 1744081836299
+        isPrivate: false
+        sortKey: 1744081826619
+      data:
+        Local: https://banking-system-r349.onrender.com
+    - name: Local Port 8080
+      meta:
+        id: env_5c6819cd928a4c48afaacfb1094958fd
+        created: 1744114651528
+        modified: 1744114735437
+        isPrivate: false
+        sortKey: 1744114651528
+      data:
+        Local: http://127.0.0.1:8080

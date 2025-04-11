@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from decimal import Decimal
 from app.models import Transaction, Account, Bill, TransactionCategory, Budget, User, db
+from app.utils.decorators import require_active_account
 
 transactions_api = Blueprint('transactions_api', __name__)
 
@@ -27,6 +28,7 @@ def validate_transaction_amount(amount_str):
 @transactions_api.route("/transactions", methods=["GET", "POST"])
 @limiter.limit('20 per minute')
 @jwt_required()
+@require_active_account
 def create_transaction():
     current_user_id = get_jwt_identity()
 
@@ -185,10 +187,13 @@ def create_transaction():
                 account_number=data["to_account_number"]
             ).first()
             if not to_account:
-                return jsonify({"error": "Destination account not found"}), 404
-
+                return jsonify(error="Destination account not found"), 404
             if account.id == to_account.id:
-                return jsonify({"error": "Cannot transfer to yourself"}), 400
+                return jsonify(error="Cannot transfer to yourself"), 400
+            # check for user act. status
+            destination_user = User.query.get(to_account.user_id)
+            if not destination_user.is_active:
+                return jsonify(error='Destination account owner has not activated their account yet'), 403
 
         # check if it's payment type
         if data["transaction_type"] == Transaction.PAYMENT:
@@ -341,6 +346,7 @@ def create_transaction():
 
 @transactions_api.route("/transactions/<int:transaction_id>", methods=["GET"])
 @jwt_required()
+@require_active_account
 def get_transaction_details(transaction_id):
     current_user_id = get_jwt_identity()
     user = User.query.get(int(current_user_id))

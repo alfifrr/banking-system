@@ -6,12 +6,14 @@ from app.models.account import Account
 from app.models.transaction_category import TransactionCategory
 from app.models.bill import Bill
 from app.models import db
+from app.utils.decorators import require_active_account
 
 bills_api = Blueprint("bills_api", __name__)
 
 
 @bills_api.route("/bills", methods=["GET", "POST"])
 @jwt_required()
+@require_active_account
 def bill():
     current_user_id = get_jwt_identity()
 
@@ -119,6 +121,7 @@ def bill():
 
 @bills_api.route("/bills/<int:bill_id>", methods=["GET", "PUT", "DELETE"])
 @jwt_required()
+@require_active_account
 def manage_bill(bill_id):
     current_user_id = get_jwt_identity()
     bill = Bill.query.get(bill_id)
@@ -251,6 +254,7 @@ def manage_bill(bill_id):
 
 @bills_api.route("/bills/<int:bill_id>/cancel", methods=["POST"])
 @jwt_required()
+@require_active_account
 def cancel_bill(bill_id):
     current_user_id = get_jwt_identity()
     bill = Bill.query.get(bill_id)
@@ -296,7 +300,8 @@ def cancel_bill(bill_id):
         db.session.commit()
 
         return (
-            jsonify({"message": "Bill cancelled successfully", "bill": bill.to_dict()}),
+            jsonify({"message": "Bill cancelled successfully",
+                    "bill": bill.to_dict()}),
             200,
         )
     except Exception as e:

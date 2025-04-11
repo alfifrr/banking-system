@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
-from app.models.user import User
 from datetime import timedelta
 from app.utils.email import send_activation_email
+from app.models import User, db
 
 auth = Blueprint("auth", __name__)
 
@@ -24,7 +24,7 @@ def login():
 
     # check for act. first
     if not user.is_active:
-        return jsonify({'error': 'Account is not verified'}), 401
+        return jsonify({'error': 'Account is not activated'}), 401
 
     access_token = create_access_token(
         identity=str(user.id),
@@ -80,10 +80,25 @@ def send_verification():
     else:
         # generate act. url
         activation_url = url_for(
-            'api.activate_account',
+            'auth.activate_account',
             token=user.activation_token,
             _external=True
         )
         # send act. email
         send_activation_email(user, activation_url)
         return jsonify({'success': 'Verification mail has been sent'}), 200
+
+
+@auth.route('/activate/<token>', methods=['GET'])
+def activate_account(token):
+    user = User.query.filter_by(activation_token=token).first()
+    if not user:
+        return jsonify({'error': 'Invalid activation token'}), 400
+
+    try:
+        user.activate_account()
+        db.session.commit()
+        return jsonify({'message': 'Account activated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

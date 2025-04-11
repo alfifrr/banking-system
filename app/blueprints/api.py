@@ -42,7 +42,7 @@ def strength_check(pw):
     return None
 
 
-@api.route("/users", methods=["GET", "POST"])
+@api.route("/users", methods=["POST"])
 def users():
     if request.method == "POST":
         if not request.is_json:
@@ -98,44 +98,22 @@ def users():
             db.session.add(main_account)
             db.session.commit()
 
+            # show new user and their acc info
+            response_data = new_user.to_dict()
+            response_data["account"] = main_account.to_dict()
+
             # generate act. url
             activation_url = url_for(
-                'api.activate_account',
+                'auth.activate_account',
                 token=activation_token,
                 _external=True
             )
             # send act. email
             send_activation_email(new_user, activation_url)
-
-            # show new user and their acc info
-            response_data = new_user.to_dict()
-            response_data["account"] = main_account.to_dict()
             return jsonify(response_data), 201
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
-
-    # GET
-    try:
-        users = User.query.all()
-        return jsonify([user.to_dict() for user in users]), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@api.route('/activate/<token>', methods=['GET'])
-def activate_account(token):
-    user = User.query.filter_by(activation_token=token).first()
-    if not user:
-        return jsonify({'error': 'Invalid activation token'}), 400
-
-    try:
-        user.activate_account()
-        db.session.commit()
-        return jsonify({'message': 'Account activated successfully'}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
 
 
 @api.route("/users/me", methods=["GET", "PUT"])

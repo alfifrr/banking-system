@@ -5,12 +5,14 @@ from app.models.budget import Budget
 from app.models.transaction_category import TransactionCategory
 from datetime import datetime, timedelta
 from decimal import Decimal, DecimalException
+from app.utils.decorators import require_active_account
 
 budget_api = Blueprint("budget_api", __name__)
 
 
 @budget_api.route("/budgets", methods=["GET", "POST"])
 @jwt_required()
+@require_active_account
 def budget():
     current_user_id = get_jwt_identity()
 
@@ -96,6 +98,7 @@ def budget():
 
 @budget_api.route("/budgets/<int:budget_id>", methods=["GET", "PUT"])
 @jwt_required()
+@require_active_account
 def budget_detail(budget_id):
     current_user_id = get_jwt_identity()
 
@@ -124,7 +127,8 @@ def budget_detail(budget_id):
                     duration = int(data["duration_minutes"])
                     if duration < 1:
                         return (
-                            jsonify({"error": "Duration must be at least 1 minute"}),
+                            jsonify(
+                                {"error": "Duration must be at least 1 minute"}),
                             400,
                         )
 
@@ -134,7 +138,8 @@ def budget_detail(budget_id):
                     return jsonify({"error": "Duration must be a valid number"}), 400
 
             if "category_id" in data:
-                new_category = TransactionCategory.query.get(data["category_id"])
+                new_category = TransactionCategory.query.get(
+                    data["category_id"])
                 if not new_category:
                     return jsonify({"error": "Category not found"}), 404
 
