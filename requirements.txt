@@ -25,6 +25,7 @@ flask==3.1.0
     #   flask-mail
     #   flask-migrate
     #   flask-sqlalchemy
+    #   flask-swagger-ui
 flask-bcrypt==1.0.1
     # via banking-system (pyproject.toml)
 flask-jwt-extended==4.7.1
@@ -39,6 +40,8 @@ flask-sqlalchemy==3.1.1
     # via
     #   banking-system (pyproject.toml)
     #   flask-migrate
+flask-swagger-ui==4.11.1
+    # via banking-system (pyproject.toml)
 greenlet==3.1.1
     # via sqlalchemy
 gunicorn==23.0.0

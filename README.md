@@ -88,6 +88,7 @@ The following Python dependencies are used in this project:
 - **Flask-Mail** (0.10.0): Mail sender
 - **Flask-Migrate** (4.1.0): Database migration management
 - **Flask-SQLAlchemy** (3.1.1): SQL ORM
+- **Flask-Swagger-UI** (4.11.1): Documentation (access using `/api/docs`)
 - **Password-Strength** (0.0.3.post2): Password validation
 - **Psycopg2-Binary** (2.9.10): PostgreSQL adapter
 - **Python-Dotenv** (1.0.1): Environment variable management
