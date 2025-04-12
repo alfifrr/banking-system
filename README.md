@@ -28,7 +28,7 @@ Before setting up the project, ensure you have the following installed:
 
 ## Local Setup Instructions
 
-1. Navigate to the project directory.
+1. Navigate to the project directory, or just pull from DockerHub Image below and skip these steps.
 2. Copy the `.env.example` as `.env` and set the provided values for Postgres' database URL, JWT secret key, and mail server provider you like.
 
 3. Build and run the Docker containers for the first time (detached from the command prompt):
@@ -51,9 +51,8 @@ docker compose up
 
 ## API Documentation
 
-- Full API documentation is available via [Postman Collection](https://documenter.getpostman.com/view/39087709/2sAYkBrgBB).
-- Base URL: Replace `{{Prefix}}` with `https://banking-system-r349.onrender.com`.
-- Alternatively, import the `Insomnia_revobank_request_list.json` file into the Insomnia application.
+- Full API documentation is available via [Deployed Swagger Docs](https://banking-system-r349.onrender.com/api/docs/).
+- Alternatively, import the `Insomnia_revobank_request_list.yaml` file into the Insomnia application.
 
 ## Docker Component
 
@@ -64,8 +63,8 @@ docker compose up
 - Ensure the Docker image is running before accessing the application.
 
 - Example endpoints for testing:
-  - Check the database connection health: `http://127.0.0.1:8080/api/health`
-  - View all accounts (requires access token obtained from `POST http://127.0.0.1:8080/api/login`): `http://127.0.0.1:8080/api/accounts`
+  - Check the database connection health on Render: `https://banking-system-r349.onrender.com/api/health`
+  - Check the database connection health on Docker: `http://127.0.0.1:8080/api/health`
 
 ## Deployed Endpoint and Image
 
